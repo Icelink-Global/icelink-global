@@ -2,25 +2,120 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --foreground: #0f172a;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-montserrat), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Running border stroke animation for metric cards */
+@keyframes border-spin {
+  0%   { --border-angle: 0deg; }
+  100% { --border-angle: 360deg; }
+}
+
+@property --border-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.metric-card {
+  position: relative;
+  background: #0f1d36;
+  border-radius: 12px;
+  padding: 16px 20px;
+  animation: border-spin 4s linear infinite;
+  background-image: conic-gradient(
+    from var(--border-angle) at 50% 50%,
+    transparent 80%,
+    rgba(59, 130, 246, 0.7) 90%,
+    transparent 100%
+  );
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.05) inset;
+}
+
+.metric-card::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  background: #0f1d36;
+  border-radius: 11px;
+  z-index: 0;
+}
+
+.metric-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.animated-border-card {
+  position: relative;
+  background: var(--card-bg, #ffffff);
+  border-radius: var(--card-radius, 24px);
+  padding: 1px;
+  animation: border-spin 4s linear infinite;
+  background-image: conic-gradient(
+    from var(--border-angle) at 50% 50%,
+    transparent 75%,
+    var(--card-border-color, rgba(59, 130, 246, 0.8)) 100%
+  );
+  opacity: 1;
+}
+
+.animated-border-card::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  background: var(--card-bg, #ffffff);
+  border-radius: calc(var(--card-radius, 24px) - 1px);
+  z-index: 0;
+}
+
+.animated-border-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Hide scrollbar for carousel */
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+@keyframes bounce-x {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(25%); }
+}
+.animate-bounce-x {
+  animation: bounce-x 1s infinite;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 18s linear infinite;
+}
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 25s linear infinite;
 }
