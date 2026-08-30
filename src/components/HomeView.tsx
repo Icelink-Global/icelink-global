@@ -38,9 +38,9 @@ const METRICS = [
 const SOURCE_MARKETS = [
   { code: 'kr', name: 'SOUTH KOREA', sub: 'Quality & Innovation' },
   { code: 'cn', name: 'CHINA', sub: 'Manufacturing Power' },
-  { code: 'ae', name: 'DUBAI (UAE)', sub: 'Global Hub' },
   { code: 'us', name: 'USA', sub: 'Technology & Quality' },
   { code: 'eu', name: 'EUROPE', sub: 'Premium Brands' },
+  { code: 'ae', name: 'DUBAI (UAE)', sub: 'Global Hub' },
 ];
 
 export function HomeView({ setCurrentTab, setSelectedProduct }: HomeViewProps) {
@@ -58,77 +58,83 @@ export function HomeView({ setCurrentTab, setSelectedProduct }: HomeViewProps) {
       {/* ══════════════════════════════════════════════
           HERO — blue gradient with animated network
       ══════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #030c1e 0%, #0a1f4e 50%, #0d2860 100%)' }}>
+      <section className="relative overflow-hidden px-4 bg-[#00051a]">
         {/* Animated grid dots */}
         <div className="absolute inset-0 pointer-events-none" style={{
           backgroundImage: 'radial-gradient(circle, rgba(59,130,246,0.15) 1px, transparent 1px)',
           backgroundSize: '36px 36px',
           animation: 'fadeInUp 1s ease'
         }} />
-        {/* Moving link lines overlay */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute w-[600px] h-[600px] rounded-full border border-blue-500/10 animate-spin-slow" style={{ top: '-200px', right: '-200px', animationDuration: '25s' }} />
-          <div className="absolute w-[400px] h-[400px] rounded-full border border-blue-400/10 animate-spin-slow" style={{ top: '-100px', right: '-100px', animationDuration: '18s', animationDirection: 'reverse' }} />
-          <div className="absolute w-[800px] h-[800px] rounded-full border border-cyan-500/5 animate-spin-slow" style={{ top: '-300px', right: '-300px', animationDuration: '35s' }} />
+        {/* Background Image on the Right */}
+        <div className="absolute inset-y-0 right-0 w-full lg:w-1/2 pointer-events-none overflow-hidden z-0 flex items-center justify-center">
+          <img 
+            src="/background.jpg" 
+            alt="Satellite Internet Background" 
+            className="w-full h-auto scale-[1.3] -translate-y-8 animate-pulse-opacity" 
+          />
+          {/* Fading gradients to blend image into the deep blue background */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#00051a] via-[#00051a]/60 to-transparent"></div>
+          <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-[#00051a] to-transparent"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-[#00051a] to-transparent"></div>
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 pt-16 pb-28 sm:pt-20 sm:pb-32 flex flex-col justify-center" style={{ minHeight: '65vh' }}>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight mb-5 max-w-2xl">
-            <span className="block whitespace-nowrap hover:tracking-wide transition-all duration-500">Connecting Markets.</span>
-            <span className="block whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 hover:from-blue-300 hover:to-cyan-300 transition-all duration-500">
-              Delivering Possibilities.
-            </span>
-          </h1>
-          <p className="text-gray-300 text-sm sm:text-base max-w-lg mb-8 leading-relaxed">
-            We source quality vehicles, products and more from trusted markets worldwide and deliver value across Africa.
-          </p>
-          <div className="flex flex-wrap gap-3 mb-8">
-            <button
-              onClick={() => setCurrentTab('autohaus')}
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-lg transition"
-            >
-              Explore Our Services
-            </button>
-            <button
-              onClick={() => setCurrentTab('sourcing')}
-              className="px-6 py-3 bg-transparent border border-white/40 hover:bg-white/10 text-white font-bold text-sm rounded-lg transition"
-            >
-              Request Sourcing
-            </button>
+        <div className="relative max-w-7xl mx-auto pt-16 pb-28 sm:pt-20 sm:pb-32 flex flex-col justify-center z-10" style={{ minHeight: '65vh' }}>
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-10">
+            <div className="flex-1 w-full relative z-10">
+              <h1 className="text-[28px] leading-[1.1] sm:text-5xl lg:text-6xl font-black text-white mb-5 max-w-4xl">
+                <span className="block whitespace-nowrap hover:tracking-wide transition-all duration-500">Connecting Markets.</span>
+                <span className="block whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 hover:from-blue-300 hover:to-cyan-300 transition-all duration-500">
+                  Delivering Possibilities.
+                </span>
+              </h1>
+              <p className="text-gray-300 text-xs sm:text-base max-w-lg mb-8 leading-relaxed">
+                We source quality vehicles, products and more from trusted markets worldwide and deliver value across Africa.
+              </p>
+              <div className="flex flex-row w-full sm:w-auto gap-2 sm:gap-3 mb-8">
+                <button
+                  onClick={() => setCurrentTab('autohaus')}
+                  className="flex-1 sm:flex-none px-2 sm:px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-[9px] sm:text-sm rounded-lg transition whitespace-nowrap text-center"
+                >
+                  Explore Our Services
+                </button>
+                <button
+                  onClick={() => setCurrentTab('sourcing')}
+                  className="flex-1 sm:flex-none px-2 sm:px-6 py-3 bg-transparent border border-white/40 hover:bg-white/10 text-white font-bold text-[9px] sm:text-sm rounded-lg transition whitespace-nowrap text-center"
+                >
+                  Request Sourcing
+                </button>
+              </div>
+            </div>
           </div>
 
           {/* Source countries — all in one card + Africa separate */}
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="flex flex-wrap items-center gap-4 px-4 py-3 rounded-xl bg-white/5 border border-white/15 backdrop-blur-sm">
+          <div className="flex flex-row items-stretch w-full mt-6 gap-2 sm:gap-4 overflow-x-auto hide-scrollbar pb-2 relative z-10">
+            <div className="flex items-center justify-between min-w-max lg:min-w-0 lg:flex-1 gap-3 sm:gap-4 px-3 sm:px-10 py-3 sm:py-7 rounded-2xl bg-[#040c2f]/70 border border-white/15 backdrop-blur-sm">
               {SOURCE_MARKETS.map((item, idx) => (
-                <div key={idx} className="flex items-center gap-2">
+                <div key={idx} className="flex items-center gap-1.5 sm:gap-3">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={`https://flagcdn.com/w40/${item.code}.png`}
                     alt={item.name}
-                    width={36}
-                    height={25}
-                    className="rounded shadow-sm flex-shrink-0 object-cover"
-                    style={{ width: 36, height: 25 }}
+                    className="shadow-sm flex-shrink-0 object-cover w-6 h-4 sm:w-12 sm:h-8"
                   />
-                  <span className="text-[12px] font-bold tracking-wide text-white whitespace-nowrap">{item.name}</span>
+                  <span className="text-[8px] sm:text-[13px] font-bold tracking-wide text-white whitespace-nowrap">{item.name}</span>
                 </div>
               ))}
             </div>
 
-            <ArrowRight size={20} className="text-blue-400 flex-shrink-0 animate-bounce-x" />
+            <div className="flex items-center justify-center hidden lg:flex px-2">
+              <ArrowRight size={28} className="text-blue-400 flex-shrink-0 animate-bounce-x" />
+            </div>
 
-            <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-blue-600/25 border border-blue-400/40 backdrop-blur-sm">
+            <div className="flex items-center justify-center gap-1.5 sm:gap-3 px-4 py-3 sm:py-7 rounded-2xl bg-[#040c2f]/70 border border-blue-400/40 backdrop-blur-sm flex-shrink-0 lg:w-auto min-w-max lg:min-w-[160px]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="https://flagcdn.com/w40/gh.png"
+                src="https://upload.wikimedia.org/wikipedia/commons/5/51/Flag_of_the_African_Union.svg"
                 alt="Africa"
-                width={36}
-                height={25}
-                className="rounded shadow-sm flex-shrink-0 object-cover"
-                style={{ width: 36, height: 25 }}
+                className="shadow-sm flex-shrink-0 object-cover w-6 h-4 sm:w-12 sm:h-8"
               />
-              <span className="text-[12px] font-bold tracking-wide text-blue-300 whitespace-nowrap">AFRICA</span>
+              <span className="text-[9px] sm:text-[14px] font-bold tracking-wide text-blue-300 whitespace-nowrap">AFRICA</span>
             </div>
           </div>
         </div>
@@ -141,13 +147,18 @@ export function HomeView({ setCurrentTab, setSelectedProduct }: HomeViewProps) {
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
 
           {/* Ice AutoHaus */}
-          <div className="animated-border-card cursor-pointer group hover:-translate-y-1 transition duration-300 shadow-[0_8px_30px_rgb(0,0,0,0.12)]" 
-               style={{ '--card-border-color': '#0d47a1', '--card-radius': '24px', '--card-bg': '#ffffff' } as React.CSSProperties}
+          <div className="animated-border-card cursor-pointer group hover:-translate-y-1 transition duration-300 shadow-[0_-15px_30px_-15px_rgba(0,0,0,0.3)]" 
+               style={{ '--card-border-color': '#0d47a1', '--card-radius': '16px', '--card-bg': '#ffffff' } as React.CSSProperties}
                onClick={() => setCurrentTab('autohaus')}>
-            <div className="p-6 pb-8 flex flex-col h-full">
+            <div className="p-6 pb-8 flex flex-col h-full rounded-2xl">
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-14 h-14 rounded-full bg-[#0d47a1] flex items-center justify-center flex-shrink-0 shadow-inner">
-                  <Car size={24} className="text-white" />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img 
+                    src="https://images.vexels.com/media/users/3/155413/isolated/preview/02fa4279f1759a65b62bafe7caf5be32-suv-car-front-view-silhouette.png" 
+                    alt="Car Icon"
+                    className="w-8 h-8 object-contain brightness-0 invert"
+                  />
                 </div>
                 <div>
                   <h3 className="font-black text-[#0d47a1] text-xl leading-tight">Ice AutoHaus</h3>
@@ -159,17 +170,17 @@ export function HomeView({ setCurrentTab, setSelectedProduct }: HomeViewProps) {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={AUTOHAUS_IMG} alt="Ice AutoHaus vehicles" className="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition duration-500" />
               </div>
-              <button className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#0d47a1] hover:bg-blue-800 text-white font-bold text-sm transition w-[60%] mt-auto">
+              <button className="flex items-center justify-center gap-1 sm:gap-2 px-3 py-2.5 sm:px-6 sm:py-3.5 rounded-lg sm:rounded-xl bg-[#0d47a1] hover:bg-blue-800 text-white font-bold text-[10px] sm:text-sm transition w-[60%] mt-auto whitespace-nowrap">
                 Explore AutoHaus <ArrowRight size={16} />
               </button>
             </div>
           </div>
 
           {/* IceLink Market */}
-          <div className="animated-border-card cursor-pointer group hover:-translate-y-1 transition duration-300 shadow-[0_8px_30px_rgb(0,0,0,0.12)]" 
-               style={{ '--card-border-color': '#1b5e20', '--card-radius': '24px', '--card-bg': '#ffffff' } as React.CSSProperties}
+          <div className="animated-border-card cursor-pointer group hover:-translate-y-1 transition duration-300 shadow-[0_-15px_30px_-15px_rgba(0,0,0,0.3)]" 
+               style={{ '--card-border-color': '#1b5e20', '--card-radius': '16px', '--card-bg': '#ffffff' } as React.CSSProperties}
                onClick={() => setCurrentTab('market')}>
-            <div className="p-6 pb-8 flex flex-col h-full">
+            <div className="p-6 pb-8 flex flex-col h-full rounded-2xl">
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-14 h-14 rounded-full bg-[#1b5e20] flex items-center justify-center flex-shrink-0 shadow-inner">
                   <ShoppingBag size={24} className="text-white" />
@@ -184,17 +195,17 @@ export function HomeView({ setCurrentTab, setSelectedProduct }: HomeViewProps) {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={MARKET_IMG} alt="IceLink Market goods" className="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition duration-500" />
               </div>
-              <button className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#1b5e20] hover:bg-green-800 text-white font-bold text-sm transition w-[60%] mt-auto">
+              <button className="flex items-center justify-center gap-1 sm:gap-2 px-3 py-2.5 sm:px-6 sm:py-3.5 rounded-lg sm:rounded-xl bg-[#1b5e20] hover:bg-green-800 text-white font-bold text-[10px] sm:text-sm transition w-[60%] mt-auto whitespace-nowrap">
                 Explore Market <ArrowRight size={16} />
               </button>
             </div>
           </div>
 
           {/* IceLink Sourcing */}
-          <div className="animated-border-card cursor-pointer group hover:-translate-y-1 transition duration-300 shadow-[0_8px_30px_rgb(0,0,0,0.12)]" 
-               style={{ '--card-border-color': '#e65100', '--card-radius': '24px', '--card-bg': '#ffffff' } as React.CSSProperties}
+          <div className="animated-border-card cursor-pointer group hover:-translate-y-1 transition duration-300 shadow-[0_-15px_30px_-15px_rgba(0,0,0,0.3)]" 
+               style={{ '--card-border-color': '#e65100', '--card-radius': '16px', '--card-bg': '#ffffff' } as React.CSSProperties}
                onClick={() => setCurrentTab('sourcing')}>
-            <div className="p-6 pb-8 flex flex-col h-full relative overflow-hidden rounded-3xl">
+            <div className="p-6 pb-8 flex flex-col h-full relative overflow-hidden rounded-2xl">
               <div className="flex items-center gap-4 mb-4 relative z-10">
                 <div className="w-14 h-14 rounded-full bg-[#e65100] flex items-center justify-center flex-shrink-0 shadow-inner">
                   <Globe size={24} className="text-white" />
@@ -209,7 +220,7 @@ export function HomeView({ setCurrentTab, setSelectedProduct }: HomeViewProps) {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={SOURCING_IMG} alt="IceLink Sourcing" className="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition duration-500" />
               </div>
-              <button className="relative z-10 flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#e65100] hover:bg-orange-800 text-white font-bold text-sm transition w-[60%] mt-auto">
+              <button className="relative z-10 flex items-center justify-center gap-1 sm:gap-2 px-3 py-2.5 sm:px-6 sm:py-3.5 rounded-lg sm:rounded-xl bg-[#e65100] hover:bg-orange-800 text-white font-bold text-[10px] sm:text-sm transition w-[60%] mt-auto whitespace-nowrap">
                 Request Sourcing <ArrowRight size={16} />
               </button>
             </div>
@@ -220,7 +231,7 @@ export function HomeView({ setCurrentTab, setSelectedProduct }: HomeViewProps) {
       {/* ══════════════════════════════════════════════
           METRICS BAR — animated border cards, dark navy
       ══════════════════════════════════════════════ */}
-      <section className="bg-[#0a1120] py-16 px-4 mt-16">
+      <section className="bg-[#00051a] py-16 px-4 mt-16">
         <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5">
           {METRICS.map((item, idx) => (
             <div key={idx} className="metric-card flex flex-col items-center text-center gap-2 py-5 px-3">
@@ -239,18 +250,22 @@ export function HomeView({ setCurrentTab, setSelectedProduct }: HomeViewProps) {
       ══════════════════════════════════════════════ */}
       <section className="bg-white py-14">
         <div className="max-w-7xl mx-auto px-4 mb-6">
-          <div className="flex justify-between items-center">
-            <h2 className="text-lg font-black text-slate-900">Popular Categories in IceLink Market</h2>
-            <button onClick={() => setCurrentTab('market')} className="flex items-center gap-2 px-4 py-2 rounded-xl border border-blue-500 text-blue-600 hover:bg-blue-50 font-bold text-xs transition bg-white shadow-sm">
-              View All Categories <ArrowRight size={12} />
+          <div className="flex justify-between items-center gap-2">
+            <h2 className="text-sm sm:text-lg font-black text-slate-900 leading-tight">Popular Categories in IceLink Market</h2>
+            <button onClick={() => setCurrentTab('market')} className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-6 py-2 sm:py-3 rounded-lg border border-blue-500 text-blue-600 hover:bg-blue-50 font-bold text-[9px] sm:text-sm transition bg-white shadow-sm flex-shrink-0 whitespace-nowrap">
+              View All <span className="hidden sm:inline">Categories</span> <ArrowRight size={12} />
             </button>
           </div>
         </div>
 
-        {/* Looping Carousel — contained within page */}
-        <div className="max-w-7xl mx-auto px-4 overflow-hidden">
-          <div className="flex gap-4 w-max animate-marquee">
-            {[...CATEGORIES, ...CATEGORIES, ...CATEGORIES].map((cat, i) => (
+        {/* Looping Carousel — full width with fade edges */}
+        <div className="relative w-full overflow-hidden mt-2">
+          {/* Left Edge Overlay */}
+          <div className="absolute left-0 top-0 bottom-0 bg-white z-10 pointer-events-none hidden xl:block xl:w-[calc(50vw-40rem)]"></div>
+          <div className="absolute top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none left-0 xl:left-[calc(50vw-40rem)]"></div>
+
+          <div className="flex gap-4 w-max animate-marquee px-4 sm:px-8">
+            {[...CATEGORIES, ...CATEGORIES, ...CATEGORIES, ...CATEGORIES].map((cat, i) => (
               <div
                 key={`${cat.name}-${i}`}
                 className="flex-shrink-0 w-44 cursor-pointer"
@@ -265,6 +280,10 @@ export function HomeView({ setCurrentTab, setSelectedProduct }: HomeViewProps) {
               </div>
             ))}
           </div>
+
+          {/* Right Edge Overlay */}
+          <div className="absolute right-0 top-0 bottom-0 bg-white z-10 pointer-events-none hidden xl:block xl:w-[calc(50vw-40rem)]"></div>
+          <div className="absolute top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none right-0 xl:right-[calc(50vw-40rem)]"></div>
         </div>
       </section>
 

@@ -23,7 +23,7 @@ export function NavigationHeader({ currentTab, setCurrentTab }: HeaderProps) {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-[#0c1424] border-b border-white/10">
+    <header className="sticky top-0 z-50 w-full bg-[#00051a] border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
         {/* Logo */}
         <button onClick={() => setCurrentTab('home')} className="flex items-center gap-2 flex-shrink-0">
@@ -87,7 +87,7 @@ export function NavigationHeader({ currentTab, setCurrentTab }: HeaderProps) {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#0c1424] border-t border-white/10 px-4 py-4 flex flex-col gap-1">
+        <div className="lg:hidden bg-[#00051a] border-t border-white/10 px-4 py-4 flex flex-col gap-1">
           {navLinks.map((link) => (
             <button
               key={link.tab}
