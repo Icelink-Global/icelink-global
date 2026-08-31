@@ -36,11 +36,11 @@ const METRICS = [
 ];
 
 const SOURCE_MARKETS = [
-  { code: 'kr', name: 'SOUTH KOREA', sub: 'Quality & Innovation' },
-  { code: 'cn', name: 'CHINA', sub: 'Manufacturing Power' },
-  { code: 'us', name: 'USA', sub: 'Technology & Quality' },
-  { code: 'eu', name: 'EUROPE', sub: 'Premium Brands' },
-  { code: 'ae', name: 'DUBAI (UAE)', sub: 'Global Hub' },
+  { code: 'kr', name: 'SOUTH KOREA', short: 'S. Korea', sub: 'Quality & Innovation' },
+  { code: 'cn', name: 'CHINA', short: 'China', sub: 'Manufacturing Power' },
+  { code: 'us', name: 'USA', short: 'USA', sub: 'Technology & Quality' },
+  { code: 'eu', name: 'EUROPE', short: 'Europe', sub: 'Premium Brands' },
+  { code: 'ae', name: 'DUBAI (UAE)', short: 'Dubai', sub: 'Global Hub' },
 ];
 
 export function HomeView({ setCurrentTab, setSelectedProduct }: HomeViewProps) {
@@ -78,7 +78,7 @@ export function HomeView({ setCurrentTab, setSelectedProduct }: HomeViewProps) {
           <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-[#00051a] to-transparent"></div>
         </div>
 
-        <div className="relative max-w-7xl mx-auto pt-16 pb-28 sm:pt-20 sm:pb-32 flex flex-col justify-center z-10" style={{ minHeight: '65vh' }}>
+        <div className="relative max-w-7xl mx-auto px-0 sm:px-4 pt-6 pb-16 sm:pt-20 sm:pb-32 flex flex-col justify-center z-10" style={{ minHeight: '45vh' }}>
           <div className="flex flex-col lg:flex-row items-center justify-between gap-10">
             <div className="flex-1 w-full relative z-10">
               <h1 className="text-[28px] leading-[1.1] sm:text-5xl lg:text-6xl font-black text-white mb-5 max-w-4xl">
@@ -108,33 +108,37 @@ export function HomeView({ setCurrentTab, setSelectedProduct }: HomeViewProps) {
           </div>
 
           {/* Source countries — all in one card + Africa separate */}
-          <div className="flex flex-row items-stretch w-full mt-6 gap-2 sm:gap-4 overflow-x-auto hide-scrollbar pb-2 relative z-10">
-            <div className="flex items-center justify-between min-w-max lg:min-w-0 lg:flex-1 gap-3 sm:gap-4 px-3 sm:px-10 py-3 sm:py-7 rounded-2xl bg-[#040c2f]/70 border border-white/15 backdrop-blur-sm">
+          <div className="flex flex-row items-stretch w-full -mt-3 sm:mt-6 gap-2 sm:gap-4 overflow-x-auto hide-scrollbar pb-2 relative z-10">
+            <div className="flex items-center justify-between min-w-0 w-full lg:flex-1 gap-2 sm:gap-5 px-3 sm:px-10 py-3 sm:py-7 rounded-xl sm:rounded-2xl bg-[#040c2f]/70 border border-white/15 backdrop-blur-sm">
               {SOURCE_MARKETS.map((item, idx) => (
-                <div key={idx} className="flex items-center gap-1.5 sm:gap-3">
+                <div key={idx} className="flex flex-col items-center gap-0.5 sm:flex-row sm:gap-3 flex-1">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={`https://flagcdn.com/w40/${item.code}.png`}
                     alt={item.name}
                     className="shadow-sm flex-shrink-0 object-cover w-6 h-4 sm:w-12 sm:h-8"
                   />
-                  <span className="text-[8px] sm:text-[13px] font-bold tracking-wide text-white whitespace-nowrap">{item.name}</span>
+                  <span className="text-[6px] sm:text-[13px] sm:font-bold font-normal tracking-wide text-white text-center leading-tight">
+                    <span className="sm:hidden">{item.short}</span>
+                    <span className="hidden sm:inline">{item.name}</span>
+                  </span>
                 </div>
               ))}
             </div>
 
-            <div className="flex items-center justify-center hidden lg:flex px-2">
-              <ArrowRight size={28} className="text-blue-400 flex-shrink-0 animate-bounce-x" />
+            <div className="flex items-center justify-center px-1 sm:px-2">
+              <ArrowRight size={16} className="text-blue-400 flex-shrink-0 sm:hidden animate-bounce-x" />
+              <ArrowRight size={28} className="text-blue-400 flex-shrink-0 hidden sm:block animate-bounce-x" />
             </div>
 
-            <div className="flex items-center justify-center gap-1.5 sm:gap-3 px-4 py-3 sm:py-7 rounded-2xl bg-[#040c2f]/70 border border-blue-400/40 backdrop-blur-sm flex-shrink-0 lg:w-auto min-w-max lg:min-w-[160px]">
+            <div className="flex flex-col items-center justify-center gap-0.5 sm:flex-row sm:gap-3 px-3 py-3 sm:py-7 rounded-xl sm:rounded-2xl bg-[#040c2f]/70 border border-blue-400/40 backdrop-blur-sm flex-shrink-0 min-w-[52px] sm:min-w-[160px]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="https://upload.wikimedia.org/wikipedia/commons/5/51/Flag_of_the_African_Union.svg"
                 alt="Africa"
                 className="shadow-sm flex-shrink-0 object-cover w-6 h-4 sm:w-12 sm:h-8"
               />
-              <span className="text-[9px] sm:text-[14px] font-bold tracking-wide text-blue-300 whitespace-nowrap">AFRICA</span>
+              <span className="text-[6px] sm:text-[14px] sm:font-bold font-normal tracking-wide text-blue-300 text-center leading-tight">AFRICA</span>
             </div>
           </div>
         </div>
