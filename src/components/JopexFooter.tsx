@@ -29,13 +29,12 @@ export function JopexFooter({ setCurrentTab }: FooterProps) {
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-10 mb-10 relative z-10">
         <div className="footer-brand flex flex-col gap-5 md:col-span-2">
           <div className="footer-logo flex items-center gap-3 cursor-pointer" onClick={(e) => handleNav('home', e)}>
-            <div className="w-11 h-11 bg-blue-600 rounded flex items-center justify-center font-black text-white text-base tracking-widest">
-              ILG
-            </div>
-            <span className="logo-text font-bold text-lg tracking-wider text-white">
-              <span className="text-white font-extrabold mr-1">ICELINK</span>
-              <span className="text-blue-500 font-bold">GLOBAL</span>
-            </span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo.png"
+              alt="IceLink Global Logo"
+              className="h-14 w-auto object-contain hover:scale-105 transition-transform duration-300 drop-shadow-[0_2px_12px_rgba(59,130,246,0.3)]"
+            />
           </div>
           <p className="footer-description text-sm leading-relaxed text-gray-400">
             Connecting international markets to deliver premium vehicles, components, general goods, and enterprise solutions across the African continent.

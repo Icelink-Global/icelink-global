@@ -26,12 +26,43 @@ export function AutoHausView({ setSelectedProduct, setCurrentTab }: AutoHausView
   ];
   const [currentBg, setCurrentBg] = useState(0);
 
+  const heroSlideImages = [
+    '/hero-cars/car-slide-1.png',
+    '/hero-cars/car-slide-3.png',
+    '/hero-cars/car-slide-4.png'
+  ];
+  const [currentHeroSlide, setCurrentHeroSlide] = useState(0);
+  // phase: 'hidden' | 'entering' | 'visible' | 'fading'
+  const [heroPhase, setHeroPhase] = useState<'hidden' | 'entering' | 'visible' | 'fading'>('hidden');
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentBg((prev) => (prev + 1) % bgImages.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [bgImages.length]);
+
+  useEffect(() => {
+    // Reset to hidden (off-screen right, no transition) so the slide-in can animate
+    setHeroPhase('hidden');
+
+    // One frame later: start sliding in from right
+    const t0 = setTimeout(() => setHeroPhase('entering'), 50);
+    // After slide-in (900ms) + 5s wait: start fade out
+    const t1 = setTimeout(() => setHeroPhase('visible'), 950);
+    const t2 = setTimeout(() => setHeroPhase('fading'), 950 + 5000);
+    // After fade (5s): advance to next slide
+    const t3 = setTimeout(() => {
+      setCurrentHeroSlide((prev) => (prev + 1) % heroSlideImages.length);
+    }, 950 + 5000 + 5000);
+
+    return () => {
+      clearTimeout(t0);
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
+  }, [currentHeroSlide, heroSlideImages.length]);
 
   // Sourcing form state
   const [sourcingForm, setSourcingForm] = useState({
@@ -95,58 +126,65 @@ export function AutoHausView({ setSelectedProduct, setCurrentTab }: AutoHausView
       {/* ══════════════════════════════════════════════
           HERO BANNER
       ══════════════════════════════════════════════ */}
-      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden py-16 px-4 bg-gradient-to-b from-[#000826] via-[#050f2e] to-[#050811]">
-        {/* Background Image — car with mountain background */}
-        <div className="absolute inset-y-0 right-0 w-full lg:w-[85%] pointer-events-none flex items-center justify-center z-0 overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/car-background.png"
-            alt="Hero Cars"
-            className="h-full w-auto object-contain object-right opacity-50 scale-115 transition-transform duration-700"
-          />
-        </div>
+      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden py-16 px-4 bg-[#00051a] border-b border-blue-900/30">
+        {/* Animated Radial Dots Effect */}
+        <div
+          className="absolute inset-0 pointer-events-none z-0"
+          style={{
+            backgroundImage: 'radial-gradient(circle, rgba(59,130,246,0.15) 1px, transparent 1px)',
+            backgroundSize: '36px 36px'
+          }}
+        />
 
-        {/* Original smooth gradient overlay: solid 1.0 left (0%-40%), fade to 0.3 right (100%) */}
-        <div className="absolute inset-0 pointer-events-none z-[1]" style={{ background: 'linear-gradient(90deg, rgba(0,8,38,1.0) 0%, rgba(0,8,38,1.0) 40%, rgba(0,8,38,0.7) 70%, rgba(0,8,38,0.3) 100%)' }} />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.2),transparent_60%)] pointer-events-none z-[1]" />
+        {/* Right Side Hero Images — Slides in from complete right edge, waits 5s, fades out 5s */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden z-10 flex items-center justify-end">
+          <div className="relative w-full lg:w-1/2 h-full flex items-center justify-start overflow-hidden">
+            {heroSlideImages.map((imgSrc, idx) => {
+              const isActive = idx === currentHeroSlide;
 
-        {/* Animated brand logos — no circle, floating freely around the car */}
-        <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
-          {brandLogos.map((brand, idx) => {
-            const total = brandLogos.length;
-            const angle = (idx / (total - 1)) * 180;
-            const rad = (angle * Math.PI) / 180;
-            const radiusX = 36;
-            const radiusY = 26;
-            const leftPos = 55 + radiusX * Math.cos(rad - Math.PI);
-            const topPos = 46 - radiusY * Math.sin(rad);
-            const animDelay = (idx * 0.28).toFixed(2);
-            const dur = (3 + (idx % 3) * 0.6).toFixed(1);
+              let translateClass = 'translate-x-[100vw]';
+              let opacityClass = 'opacity-0';
+              let transitionClass = 'transition-none';
 
-            return (
-              <div
-                key={brand.name}
-                className="absolute transform -translate-x-1/2 -translate-y-1/2"
-                style={{
-                  left: `${leftPos}%`,
-                  top: `${topPos}%`,
-                  animation: `brandFloat ${dur}s ease-in-out infinite alternate`,
-                  animationDelay: `${animDelay}s`
-                }}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
+              if (isActive) {
+                if (heroPhase === 'hidden') {
+                  // Offscreen right, instant (no transition) — browser paints here first
+                  translateClass = 'translate-x-[100vw]';
+                  opacityClass = 'opacity-100';
+                  transitionClass = 'transition-none';
+                } else if (heroPhase === 'entering') {
+                  // Slide in from right
+                  translateClass = 'translate-x-0';
+                  opacityClass = 'opacity-100';
+                  transitionClass = 'transition-transform duration-[900ms] ease-out';
+                } else if (heroPhase === 'visible') {
+                  translateClass = 'translate-x-0';
+                  opacityClass = 'opacity-100';
+                  transitionClass = 'transition-none';
+                } else if (heroPhase === 'fading') {
+                  translateClass = 'translate-x-0';
+                  opacityClass = 'opacity-0';
+                  transitionClass = 'transition-opacity duration-[5000ms] ease-in-out';
+                }
+              }
+
+              return (
                 <img
-                  src={brand.logo}
-                  alt={brand.name}
-                  className="w-8 h-8 sm:w-10 sm:h-10 object-contain filter invert drop-shadow-[0_0_6px_rgba(59,130,246,0.8)]"
+                  key={imgSrc}
+                  src={imgSrc}
+                  alt={`Featured Hero Vehicle ${idx + 1}`}
+                  className={`absolute w-full h-full object-contain object-left scale-[0.85] transform origin-left drop-shadow-[0_20px_45px_rgba(59,130,246,0.35)] ${
+                    isActive ? 'z-10' : 'z-0'
+                  } ${translateClass} ${opacityClass} ${transitionClass}`}
                 />
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 z-20 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div>
+        {/* Hero Main Content */}
+        <div className="max-w-7xl mx-auto px-4 z-20 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-6">
+          <div className="max-w-xl">
             <h1 className="text-4xl sm:text-6xl font-black mb-6 leading-tight">
               Quality Vehicles.<br />
               <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-indigo-300 bg-clip-text text-transparent">
@@ -176,11 +214,41 @@ export function AutoHausView({ setSelectedProduct, setCurrentTab }: AutoHausView
           </div>
         </div>
 
+        {/* Floating Brand Logos — matching AboutUs floatUpRandom style with 10% opacity */}
+        <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
+          {brandLogos.map((brand, idx) => {
+            const leftPos = 40 + ((idx * 4.5) % 55);
+            const animDuration = 14 + (idx % 5) * 3;
+            const delay = -(idx * 2.8);
+            const sizeClass = idx % 2 === 0 ? "w-9 h-9" : "w-7 h-7";
+
+            return (
+              <div
+                key={brand.name}
+                className="absolute bottom-0 transform -translate-x-1/2"
+                style={{
+                  left: `${leftPos}%`,
+                  animation: `floatUpRandomBrand ${animDuration}s linear infinite`,
+                  animationDelay: `${delay}s`
+                }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={brand.logo}
+                  alt={brand.name}
+                  className={`${sizeClass} object-contain filter invert opacity-10 drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]`}
+                />
+              </div>
+            );
+          })}
+        </div>
+
         <style dangerouslySetInnerHTML={{__html: `
-          @keyframes brandFloat {
-            0%   { transform: translate(-50%, -50%) translateY(0px) scale(1);    opacity: 0.6; filter: drop-shadow(0 0 4px rgba(59,130,246,0.5)) invert(1); }
-            50%  { transform: translate(-50%, -50%) translateY(-8px) scale(1.15); opacity: 1;   filter: drop-shadow(0 0 10px rgba(59,130,246,0.9)) invert(1); }
-            100% { transform: translate(-50%, -50%) translateY(4px) scale(0.95); opacity: 0.7; filter: drop-shadow(0 0 4px rgba(59,130,246,0.5)) invert(1); }
+          @keyframes floatUpRandomBrand {
+            0%   { transform: translateY(10vh) scale(0.8) rotate(0deg); opacity: 0; }
+            15%  { opacity: 0.1; }
+            85%  { opacity: 0.1; }
+            100% { transform: translateY(-110vh) scale(1.1) rotate(15deg); opacity: 0; }
           }
         `}} />
       </section>
@@ -243,229 +311,228 @@ export function AutoHausView({ setSelectedProduct, setCurrentTab }: AutoHausView
       </section>
 
       {/* ══════════════════════════════════════════════
-          SHOP BY CATEGORY
+          SHOP BY CATEGORY THROUGH ALL VEHICLES SECTION (WHITE BACKGROUND WRAPPER)
       ══════════════════════════════════════════════ */}
-      <section className="py-14 px-4 max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-black text-white">Shop by Category</h2>
-            <p className="text-xs text-gray-400 mt-1">Select a vehicle category to filter inventory</p>
-          </div>
-          <button
-            onClick={() => setFilterType('all')}
-            className="text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1"
-          >
-            View all categories <ArrowRight size={14} />
-          </button>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-          {[
-            {
-              id: 'all',
-              name: 'All Vehicles',
-              sub: 'Explore all vehicles',
-              icon: 'https://images.vexels.com/media/users/3/155413/isolated/preview/02fa4279f1759a65b62bafe7caf5be32-suv-car-front-view-silhouette.png'
-            },
-            {
-              id: 'sedan',
-              name: 'Sedan',
-              sub: 'Comfort & Style',
-              icon: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?q=80&w=300'
-            },
-            {
-              id: 'cat_suv',
-              name: 'SUV',
-              sub: 'Power & Versatility',
-              icon: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=300'
-            },
-            {
-              id: 'cat_ev',
-              name: 'EV / Hybrid',
-              sub: 'Smart & Efficient',
-              icon: 'https://images.unsplash.com/photo-1563720223185-11003d516935?q=80&w=300'
-            },
-            {
-              id: 'truck',
-              name: 'Truck / Bus',
-              sub: 'Commercial Vehicles',
-              icon: 'https://images.unsplash.com/photo-1559416523-140dd55d222c?q=80&w=300'
-            },
-            {
-              id: 'luxury',
-              name: 'Luxury',
-              sub: 'Premium Selection',
-              icon: 'https://images.unsplash.com/photo-1594502184342-2e12f877aa73?q=80&w=300'
-            }
-          ].map((cat) => (
-            <div
-              key={cat.id}
-              onClick={() => {
-                setFilterType(cat.id);
-                const element = document.getElementById('vehicle-listings');
-                element?.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className={`cursor-pointer rounded-xl p-4 border transition-all duration-300 flex flex-col items-center text-center ${
-                filterType === cat.id
-                  ? 'bg-blue-600/20 border-blue-500 shadow-lg shadow-blue-900/30'
-                  : 'bg-[#0a0f24] border-white/10 hover:border-blue-500/50 hover:bg-[#0e1638]'
-              }`}
+      <div className="bg-white text-slate-900 border-b border-gray-200">
+        
+        {/* SHOP BY CATEGORY */}
+        <section className="py-14 px-4 max-w-7xl mx-auto">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-black text-[#00051a]">Shop by Category</h2>
+              <p className="text-xs text-blue-950/70 font-medium mt-1">Select a vehicle category to filter inventory</p>
+            </div>
+            <button
+              onClick={() => setFilterType('all')}
+              className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-blue-600/20"
             >
-              <div className="w-16 h-12 rounded-lg overflow-hidden mb-3 bg-neutral-900 flex items-center justify-center">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={cat.icon} alt={cat.name} className="w-full h-full object-cover" />
-              </div>
-              <h3 className="font-extrabold text-sm text-white mb-0.5">{cat.name}</h3>
-              <p className="text-[10px] text-gray-400">{cat.sub}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════
-          CAN'T FIND WHAT YOU'RE LOOKING FOR BANNER
-      ══════════════════════════════════════════════ */}
-      <section className="px-4 max-w-7xl mx-auto mb-16">
-        <div className="relative rounded-2xl bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950 border border-blue-500/30 p-8 sm:p-10 overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="z-10 max-w-xl">
-            <h3 className="text-2xl font-black text-white mb-2">Can't find what you're looking for?</h3>
-            <p className="text-gray-300 text-sm leading-relaxed">
-              Let us source the perfect vehicle for you from our trusted global network in Korea, China, UAE, and USA.
-            </p>
-          </div>
-          <button
-            onClick={() => setShowSourceModal(true)}
-            className="z-10 flex-shrink-0 px-7 py-3.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs uppercase tracking-wider transition shadow-lg"
-          >
-            Source a Vehicle
-          </button>
-          <div className="absolute right-0 top-0 bottom-0 w-1/3 opacity-20 pointer-events-none">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?q=80&w=600"
-              alt=""
-              className="w-full h-full object-cover"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════
-          ALL VEHICLES CATALOG LISTINGS
-      ══════════════════════════════════════════════ */}
-      <section id="vehicle-listings" className="py-10 px-4 max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-black text-white">All Vehicles</h2>
-            <p className="text-xs text-gray-400 mt-1">Find your perfect vehicle from our global inventory</p>
+              <span>View all categories</span> <ArrowRight size={14} />
+            </button>
           </div>
 
-          {/* Search bar */}
-          <div className="relative w-full md:w-72">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search make, model, stock ID..."
-              className="w-full bg-[#0a0f24] border border-white/15 rounded-lg px-3.5 py-2 pl-9 text-xs text-white placeholder-gray-400 outline-none focus:border-blue-500"
-            />
-            <Search size={14} className="absolute left-3 top-2.5 text-gray-400" />
-          </div>
-        </div>
-
-        {/* Toolbar & Filters */}
-        <div className="bg-[#0a0f24] border border-white/10 rounded-xl p-4 mb-8">
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
-            <div>
-              <label className="text-[10px] font-bold text-gray-400 block mb-1 uppercase">Country of Origin</label>
-              <select
-                value={selectedCountry}
-                onChange={(e) => setSelectedCountry(e.target.value)}
-                className="w-full bg-[#050811] border border-white/10 rounded px-2.5 py-1.5 text-xs text-white outline-none focus:border-blue-500"
-              >
-                <option value="all">All Countries</option>
-                <option value="korea">South Korea</option>
-                <option value="china">China</option>
-                <option value="usa">USA</option>
-                <option value="dubai">Dubai (UAE)</option>
-                <option value="japan">Japan</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="text-[10px] font-bold text-gray-400 block mb-1 uppercase">Category</label>
-              <select
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value)}
-                className="w-full bg-[#050811] border border-white/10 rounded px-2.5 py-1.5 text-xs text-white outline-none focus:border-blue-500"
-              >
-                <option value="all">All Categories</option>
-                <option value="sedan">Sedan</option>
-                <option value="cat_suv">SUV</option>
-                <option value="cat_ev">EV / Hybrid</option>
-                <option value="truck">Truck / Bus</option>
-                <option value="luxury">Luxury</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="text-[10px] font-bold text-gray-400 block mb-1 uppercase">Fuel Type</label>
-              <select className="w-full bg-[#050811] border border-white/10 rounded px-2.5 py-1.5 text-xs text-white outline-none focus:border-blue-500">
-                <option value="all">All Types</option>
-                <option value="gasoline">Gasoline</option>
-                <option value="diesel">Diesel</option>
-                <option value="electric">Electric</option>
-                <option value="hybrid">Hybrid</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="text-[10px] font-bold text-gray-400 block mb-1 uppercase">Price Range</label>
-              <div className="flex items-center gap-1">
-                <input type="text" placeholder="Min" className="w-full bg-[#050811] border border-white/10 rounded px-2 py-1.5 text-xs text-white outline-none" />
-                <span className="text-gray-500 text-xs">-</span>
-                <input type="text" placeholder="Max" className="w-full bg-[#050811] border border-white/10 rounded px-2 py-1.5 text-xs text-white outline-none" />
-              </div>
-            </div>
-
-            <div className="col-span-2 flex items-end gap-2">
-              <button
-                onClick={() => {
-                  setSelectedCountry('all');
-                  setFilterType('all');
-                  setSearchQuery('');
-                }}
-                className="flex-1 py-1.5 rounded bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 font-bold text-xs transition"
-              >
-                Clear All
-              </button>
-            </div>
-          </div>
-
-          {/* Category Filter Pills */}
-          <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-white/5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {[
-              { label: `All (${vehicles.length})`, id: 'all' },
-              { label: 'Sedan', id: 'sedan' },
-              { label: 'SUV', id: 'cat_suv' },
-              { label: 'EV / Hybrid', id: 'cat_ev' },
-              { label: 'Truck / Bus', id: 'truck' },
-              { label: 'Luxury', id: 'luxury' }
-            ].map((btn) => (
-              <button
-                key={btn.id}
-                onClick={() => setFilterType(btn.id)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition ${
-                  filterType === btn.id
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+              {
+                id: 'all',
+                name: 'All Vehicles',
+                sub: 'Explore all vehicles',
+                icon: 'https://images.vexels.com/media/users/3/155413/isolated/preview/02fa4279f1759a65b62bafe7caf5be32-suv-car-front-view-silhouette.png'
+              },
+              {
+                id: 'sedan',
+                name: 'Sedan',
+                sub: 'Comfort & Style',
+                icon: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?q=80&w=300'
+              },
+              {
+                id: 'cat_suv',
+                name: 'SUV',
+                sub: 'Power & Versatility',
+                icon: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=300'
+              },
+              {
+                id: 'cat_ev',
+                name: 'EV / Hybrid',
+                sub: 'Smart & Efficient',
+                icon: 'https://images.unsplash.com/photo-1563720223185-11003d516935?q=80&w=300'
+              },
+              {
+                id: 'truck',
+                name: 'Truck / Bus',
+                sub: 'Commercial Vehicles',
+                icon: 'https://images.unsplash.com/photo-1559416523-140dd55d222c?q=80&w=300'
+              },
+              {
+                id: 'luxury',
+                name: 'Luxury',
+                sub: 'Premium Selection',
+                icon: 'https://images.unsplash.com/photo-1594502184342-2e12f877aa73?q=80&w=300'
+              }
+            ].map((cat) => (
+              <div
+                key={cat.id}
+                onClick={() => {
+                  setFilterType(cat.id);
+                  const element = document.getElementById('vehicle-listings');
+                  element?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className={`cursor-pointer rounded-xl p-4 border transition-all duration-300 flex flex-col items-center text-center ${
+                  filterType === cat.id
+                    ? 'bg-blue-600/20 border-blue-500 shadow-lg shadow-blue-900/30'
+                    : 'bg-[#0a0f24] border-white/10 hover:border-blue-500/50 hover:bg-[#0e1638]'
                 }`}
               >
-                {btn.label}
-              </button>
+                <div className="w-16 h-12 rounded-lg overflow-hidden mb-3 bg-neutral-900 flex items-center justify-center">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={cat.icon} alt={cat.name} className="w-full h-full object-cover" />
+                </div>
+                <h3 className="font-extrabold text-sm text-white mb-0.5">{cat.name}</h3>
+                <p className="text-[10px] text-gray-400">{cat.sub}</p>
+              </div>
             ))}
           </div>
-        </div>
+        </section>
+
+        {/* CAN'T FIND WHAT YOU'RE LOOKING FOR BANNER */}
+        <section className="px-4 max-w-7xl mx-auto mb-16">
+          <div className="relative rounded-2xl bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950 border border-blue-500/30 p-8 sm:p-10 overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div className="z-10 max-w-xl">
+              <h3 className="text-2xl font-black text-white mb-2">Can't find what you're looking for?</h3>
+              <p className="text-gray-300 text-sm leading-relaxed">
+                Let us source the perfect vehicle for you from our trusted global network in Korea, China, UAE, and USA.
+              </p>
+            </div>
+            <button
+              onClick={() => setShowSourceModal(true)}
+              className="z-10 flex-shrink-0 px-7 py-3.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs uppercase tracking-wider transition shadow-lg"
+            >
+              Source a Vehicle
+            </button>
+            <div className="absolute right-0 top-0 bottom-0 w-1/3 opacity-20 pointer-events-none">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?q=80&w=600"
+                alt=""
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* ALL VEHICLES CATALOG LISTINGS */}
+        <section id="vehicle-listings" className="pb-16 px-4 max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-black text-[#00051a]">All Vehicles</h2>
+              <p className="text-xs text-blue-950/70 font-medium mt-1">Find your perfect vehicle from our global inventory</p>
+            </div>
+
+            {/* Search bar */}
+            <div className="relative w-full md:w-72">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search make, model, stock ID..."
+                className="w-full bg-[#0a0f24] border border-white/15 rounded-lg px-3.5 py-2 pl-9 text-xs text-white placeholder-gray-400 outline-none focus:border-blue-500"
+              />
+              <Search size={14} className="absolute left-3 top-2.5 text-gray-400" />
+            </div>
+          </div>
+
+          {/* Toolbar & Filters */}
+          <div className="bg-[#0a0f24] border border-white/10 rounded-xl p-4 mb-8">
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
+              <div>
+                <label className="text-[10px] font-bold text-gray-400 block mb-1 uppercase">Country of Origin</label>
+                <select
+                  value={selectedCountry}
+                  onChange={(e) => setSelectedCountry(e.target.value)}
+                  className="w-full bg-[#050811] border border-white/10 rounded px-2.5 py-1.5 text-xs text-white outline-none focus:border-blue-500"
+                >
+                  <option value="all">All Countries</option>
+                  <option value="korea">South Korea</option>
+                  <option value="china">China</option>
+                  <option value="usa">USA</option>
+                  <option value="dubai">Dubai (UAE)</option>
+                  <option value="japan">Japan</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold text-gray-400 block mb-1 uppercase">Category</label>
+                <select
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value)}
+                  className="w-full bg-[#050811] border border-white/10 rounded px-2.5 py-1.5 text-xs text-white outline-none focus:border-blue-500"
+                >
+                  <option value="all">All Categories</option>
+                  <option value="sedan">Sedan</option>
+                  <option value="cat_suv">SUV</option>
+                  <option value="cat_ev">EV / Hybrid</option>
+                  <option value="truck">Truck / Bus</option>
+                  <option value="luxury">Luxury</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold text-gray-400 block mb-1 uppercase">Fuel Type</label>
+                <select className="w-full bg-[#050811] border border-white/10 rounded px-2.5 py-1.5 text-xs text-white outline-none focus:border-blue-500">
+                  <option value="all">All Types</option>
+                  <option value="gasoline">Gasoline</option>
+                  <option value="diesel">Diesel</option>
+                  <option value="electric">Electric</option>
+                  <option value="hybrid">Hybrid</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold text-gray-400 block mb-1 uppercase">Price Range</label>
+                <div className="flex items-center gap-1">
+                  <input type="text" placeholder="Min" className="w-full bg-[#050811] border border-white/10 rounded px-2 py-1.5 text-xs text-white outline-none" />
+                  <span className="text-gray-500 text-xs">-</span>
+                  <input type="text" placeholder="Max" className="w-full bg-[#050811] border border-white/10 rounded px-2 py-1.5 text-xs text-white outline-none" />
+                </div>
+              </div>
+
+              <div className="col-span-2 flex items-end gap-2">
+                <button
+                  onClick={() => {
+                    setSelectedCountry('all');
+                    setFilterType('all');
+                    setSearchQuery('');
+                  }}
+                  className="flex-1 py-1.5 rounded bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 font-bold text-xs transition"
+                >
+                  Clear All
+                </button>
+              </div>
+            </div>
+
+            {/* Category Filter Pills */}
+            <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-white/5">
+              {[
+                { label: `All (${vehicles.length})`, id: 'all' },
+                { label: 'Sedan', id: 'sedan' },
+                { label: 'SUV', id: 'cat_suv' },
+                { label: 'EV / Hybrid', id: 'cat_ev' },
+                { label: 'Truck / Bus', id: 'truck' },
+                { label: 'Luxury', id: 'luxury' }
+              ].map((btn) => (
+                <button
+                  key={btn.id}
+                  onClick={() => setFilterType(btn.id)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition ${
+                    filterType === btn.id
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                  }`}
+                >
+                  {btn.label}
+                </button>
+              ))}
+            </div>
+          </div>
 
         {/* Vehicles Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -550,12 +617,24 @@ export function AutoHausView({ setSelectedProduct, setCurrentTab }: AutoHausView
           })}
         </div>
       </section>
+      </div>
 
       {/* ══════════════════════════════════════════════
           WHY CHOOSE ICE AUTOHAUS?
       ══════════════════════════════════════════════ */}
-      <section className="py-16 px-4 bg-[#03081a] border-t border-blue-900/30">
-        <div className="max-w-7xl mx-auto">
+      <section className="relative py-16 px-4 bg-[#03081a] border-t border-blue-900/30 overflow-hidden">
+        {/* Background Image - Upscaled Car */}
+        <div className="absolute inset-y-0 right-0 w-full lg:w-1/2 pointer-events-none opacity-20 overflow-hidden flex items-center justify-end z-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/upscaled-car-v2.png"
+            alt=""
+            className="w-full h-full object-contain object-right scale-125"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#03081a] via-[#03081a]/60 to-transparent" />
+        </div>
+
+        <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center max-w-2xl mx-auto mb-12">
             <h2 className="text-3xl font-black text-white mb-3">Why Choose Ice AutoHaus?</h2>
             <p className="text-sm text-gray-400">
@@ -606,45 +685,47 @@ export function AutoHausView({ setSelectedProduct, setCurrentTab }: AutoHausView
       {/* ══════════════════════════════════════════════
           FEATURED PARTS & ACCESSORIES
       ══════════════════════════════════════════════ */}
-      <section id="featured-parts" className="py-16 px-4 max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-black text-white">Featured Parts & Accessories</h2>
-            <p className="text-xs text-gray-400 mt-1">OEM and high quality replacement auto spare parts</p>
-          </div>
-          <button
-            onClick={() => setCurrentTab('sourcing')}
-            className="text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1"
-          >
-            Request Specific Part <ArrowRight size={14} />
-          </button>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
-          {spareParts.map((part) => (
-            <div key={part.id} className="rounded-xl bg-[#0a0f24] border border-white/10 p-4 flex flex-col justify-between hover:border-blue-500/40 transition">
-              <div>
-                <div className="aspect-square rounded-lg bg-neutral-900 overflow-hidden mb-3">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={part.images[0]} alt={part.name} className="w-full h-full object-cover" />
-                </div>
-                <h4 className="font-bold text-sm text-white mb-1">{part.name}</h4>
-                <p className="text-[11px] text-gray-400 mb-3">{part.description}</p>
-              </div>
-              <div className="pt-3 border-t border-white/5 flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] text-gray-500 uppercase block font-bold">Price</span>
-                  <span className="text-sm font-black text-blue-400">GHS {((part.price || 20) * 14.5).toLocaleString()}</span>
-                </div>
-                <button
-                  onClick={() => handleWhatsAppEnquiry(part.name, part.id)}
-                  className="px-3 py-1.5 rounded bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px] uppercase"
-                >
-                  Order
-                </button>
-              </div>
+      <section id="featured-parts" className="py-16 px-4 bg-white border-t border-gray-200">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-black text-[#00051a]">Featured Parts & Accessories</h2>
+              <p className="text-xs text-blue-950/70 font-medium mt-1">OEM and high quality replacement auto spare parts</p>
             </div>
-          ))}
+            <button
+              onClick={() => setCurrentTab('sourcing')}
+              className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-blue-600/20"
+            >
+              <span>Request Specific Part</span> <ArrowRight size={14} />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+            {spareParts.map((part) => (
+              <div key={part.id} className="rounded-xl bg-[#0a0f24] border border-white/10 p-4 flex flex-col justify-between hover:border-blue-500/40 transition shadow-md">
+                <div>
+                  <div className="aspect-square rounded-lg bg-neutral-900 overflow-hidden mb-3">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={part.images[0]} alt={part.name} className="w-full h-full object-cover" />
+                  </div>
+                  <h4 className="font-bold text-sm text-white mb-1">{part.name}</h4>
+                  <p className="text-[11px] text-gray-400 mb-3">{part.description}</p>
+                </div>
+                <div className="pt-3 border-t border-white/5 flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] text-gray-500 uppercase block font-bold">Price</span>
+                    <span className="text-sm font-black text-blue-400">GHS {((part.price || 20) * 14.5).toLocaleString()}</span>
+                  </div>
+                  <button
+                    onClick={() => handleWhatsAppEnquiry(part.name, part.id)}
+                    className="px-3 py-1.5 rounded bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px] uppercase"
+                  >
+                    Order
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

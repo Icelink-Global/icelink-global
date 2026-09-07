@@ -239,15 +239,23 @@ export function ResourcesView({ setCurrentTab }: ResourcesViewProps) {
       </section>
 
       {/* FEATURED DOWNLOADABLE GUIDES */}
-      <section className="py-16 px-4 max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+      <section className="py-20 px-4 max-w-7xl mx-auto bg-white">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6 pb-6 border-b border-slate-100">
           <div>
-            <span className="text-xs text-blue-600 font-bold tracking-widest uppercase mb-1 block">Downloadable Knowledge</span>
-            <h2 className="text-3xl font-black text-gray-900">Import Documentation & Toolkits</h2>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-xs font-extrabold uppercase tracking-widest mb-3">
+              <BookOpen size={14} />
+              <span>Downloadable Knowledge</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+              Import Documentation & Toolkits
+            </h2>
+            <p className="text-slate-500 text-xs sm:text-sm mt-2 max-w-xl">
+              Download verified trade guides, tariff calculators, and official pre-shipment inspection protocols compiled by our global sourcing team.
+            </p>
           </div>
 
           {/* Category Filter Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
             {[
               { id: 'all', label: 'All Resources' },
               { id: 'guides', label: 'Import Guides' },
@@ -257,10 +265,10 @@ export function ResourcesView({ setCurrentTab }: ResourcesViewProps) {
               <button
                 key={tab.id}
                 onClick={() => setActiveCategory(tab.id)}
-                className={`px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
+                className={`px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 ${
                   activeCategory === tab.id
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25 scale-[1.02]'
+                    : 'bg-slate-100/80 text-slate-600 hover:bg-slate-200/80 hover:text-slate-900'
                 }`}
               >
                 {tab.label}
@@ -270,41 +278,43 @@ export function ResourcesView({ setCurrentTab }: ResourcesViewProps) {
         </div>
 
         {/* Guides Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredGuides.map(guide => (
             <div 
               key={guide.id}
-              className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
+              className="bg-white rounded-2xl p-7 border border-slate-200/80 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_35px_rgba(59,130,246,0.12)] hover:border-blue-300 transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1.5 relative overflow-hidden"
             >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-50/60 to-transparent rounded-bl-full pointer-events-none group-hover:from-blue-100/70 transition-colors" />
+
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-3 rounded-xl bg-blue-50/80 group-hover:bg-blue-100 transition-colors">
+                <div className="flex items-center justify-between mb-5 relative z-10">
+                  <div className="p-3.5 rounded-2xl bg-blue-50 border border-blue-100/80 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300 shadow-sm">
                     {guide.icon}
                   </div>
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100">
+                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-blue-700 bg-blue-50/90 px-3 py-1 rounded-full border border-blue-200/60 shadow-xs">
                     {guide.type}
                   </span>
                 </div>
 
-                <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                <h3 className="text-lg font-black text-slate-900 mb-2.5 group-hover:text-blue-600 transition-colors leading-snug">
                   {guide.title}
                 </h3>
-                <p className="text-xs text-gray-600 leading-relaxed mb-6">
+                <p className="text-xs text-slate-600 leading-relaxed mb-6">
                   {guide.description}
                 </p>
               </div>
 
-              <div className="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
+              <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400 font-medium">
                 <div className="flex items-center gap-2">
-                  <span>{guide.size}</span>
+                  <span className="font-bold text-slate-700">{guide.size}</span>
                   <span>•</span>
                   <span>{guide.date}</span>
                 </div>
                 <button 
                   onClick={() => alert(`Downloading: ${guide.title}`)}
-                  className="flex items-center gap-1.5 font-bold text-blue-600 hover:text-blue-800 transition"
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 group-hover:bg-blue-600 text-white font-bold text-xs transition-all duration-300 shadow-sm hover:shadow-md"
                 >
-                  <Download size={14} />
+                  <Download size={14} className="group-hover:animate-bounce" />
                   <span>Download</span>
                 </button>
               </div>
@@ -313,10 +323,10 @@ export function ResourcesView({ setCurrentTab }: ResourcesViewProps) {
         </div>
 
         {filteredGuides.length === 0 && (
-          <div className="text-center py-16 bg-gray-50 rounded-2xl border border-dashed border-gray-300">
-            <HelpCircle size={40} className="mx-auto text-gray-400 mb-3" />
-            <h3 className="text-lg font-bold text-gray-700">No matching resources found</h3>
-            <p className="text-xs text-gray-500 mt-1">Try adjusting your search term or filter category.</p>
+          <div className="text-center py-16 bg-slate-50 rounded-3xl border border-dashed border-slate-300">
+            <HelpCircle size={40} className="mx-auto text-slate-400 mb-3" />
+            <h3 className="text-lg font-bold text-slate-700">No matching resources found</h3>
+            <p className="text-xs text-slate-500 mt-1">Try adjusting your search term or filter category.</p>
           </div>
         )}
       </section>
@@ -352,7 +362,7 @@ export function ResourcesView({ setCurrentTab }: ResourcesViewProps) {
                 title: 'Port Customs & Delivery',
                 desc: 'Customs clearance processed smoothly and delivered directly to your doorstep.'
               }
-            ].map((s, idx) => (
+            ].map((s) => (
               <div key={s.step} className="bg-[#040c2f]/80 p-6 rounded-2xl border border-white/10 relative group hover:border-blue-500/50 transition">
                 <div className="text-4xl font-black text-blue-500/30 mb-3 group-hover:text-blue-400 transition-colors">
                   {s.step}
@@ -365,15 +375,22 @@ export function ResourcesView({ setCurrentTab }: ResourcesViewProps) {
         </div>
       </section>
 
-      {/* FREQUENTLY ASKED QUESTIONS (FAQ) */}
-      <section className="py-16 px-4 max-w-5xl mx-auto">
-        <div className="text-center mb-12">
-          <span className="text-xs text-blue-600 font-extrabold tracking-widest uppercase mb-2 block">Clear Answers</span>
-          <h2 className="text-3xl font-black text-gray-900 mb-4">Frequently Asked Questions</h2>
-          <p className="text-sm text-gray-600">Everything you need to know about purchasing, shipping, and customs clearance.</p>
+      {/* FREQUENTLY ASKED QUESTIONS (FAQ) — Premium White Background Redesign */}
+      <section className="py-20 px-4 max-w-6xl mx-auto bg-white">
+        <div className="text-center max-w-3xl mx-auto mb-14">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-xs font-extrabold uppercase tracking-widest mb-3">
+            <HelpCircle size={14} />
+            <span>Clear Answers</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mb-4">
+            Frequently Asked Questions
+          </h2>
+          <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+            Everything you need to know about purchasing, international shipping, escrow payment protection, and port customs clearance.
+          </p>
 
           {/* FAQ Category Filter */}
-          <div className="flex items-center justify-center gap-2 mt-6 flex-wrap">
+          <div className="flex items-center justify-center gap-2.5 mt-8 flex-wrap">
             {[
               { id: 'all', label: 'All Questions' },
               { id: 'shipping', label: 'Shipping & Transit' },
@@ -384,10 +401,10 @@ export function ResourcesView({ setCurrentTab }: ResourcesViewProps) {
               <button
                 key={cat.id}
                 onClick={() => setActiveFaqCategory(cat.id)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition ${
+                className={`px-4 py-2 rounded-full text-xs font-bold transition-all duration-200 ${
                   activeFaqCategory === cat.id
-                    ? 'bg-blue-600 text-white shadow'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20 scale-105'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
                 }`}
               >
                 {cat.label}
@@ -396,31 +413,41 @@ export function ResourcesView({ setCurrentTab }: ResourcesViewProps) {
           </div>
         </div>
 
-        {/* FAQ Accordion */}
-        <div className="space-y-4">
+        {/* FAQ Grid Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {filteredFaqs.map((faq, index) => {
             const isOpen = openFaqIndex === index;
             return (
               <div 
                 key={index}
-                className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden transition-all"
+                className={`rounded-2xl border transition-all duration-300 overflow-hidden bg-white ${
+                  isOpen 
+                    ? 'border-blue-500 shadow-xl ring-2 ring-blue-500/10' 
+                    : 'border-slate-200 hover:border-slate-300 hover:shadow-md'
+                }`}
               >
                 <button
                   onClick={() => toggleFaq(index)}
-                  className="w-full px-6 py-4 text-left flex items-center justify-between gap-4 focus:outline-none hover:bg-gray-50/80 transition-colors"
+                  className="w-full p-6 text-left flex items-start justify-between gap-4 focus:outline-none bg-white hover:bg-slate-50/50 transition-colors"
                 >
-                  <span className="text-sm font-bold text-gray-900 flex items-center gap-3">
-                    <HelpCircle size={18} className="text-blue-600 flex-shrink-0" />
-                    {faq.question}
+                  <span className="text-sm font-black text-slate-900 flex items-start gap-3.5 leading-snug">
+                    <span className={`w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0 text-xs font-extrabold transition-colors ${
+                      isOpen ? 'bg-blue-600 text-white' : 'bg-blue-50 text-blue-600'
+                    }`}>
+                      Q
+                    </span>
+                    <span className="pt-0.5">{faq.question}</span>
                   </span>
-                  <div className={`w-6 h-6 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-sm font-bold transition-transform duration-300 ${isOpen ? 'rotate-180 bg-blue-600 text-white' : ''}`}>
+                  <div className={`w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0 text-xs font-bold transition-transform duration-300 ${
+                    isOpen ? 'rotate-180 bg-blue-600 text-white' : 'bg-slate-100 text-slate-500'
+                  }`}>
                     ↓
                   </div>
                 </button>
 
                 {isOpen && (
-                  <div className="px-6 pb-5 pt-1 text-xs text-gray-600 leading-relaxed border-t border-gray-100 bg-gray-50/50">
-                    <p className="pl-7">{faq.answer}</p>
+                  <div className="px-6 pb-6 pt-2 text-xs text-slate-600 leading-relaxed border-t border-slate-100 bg-slate-50/60">
+                    <p className="pl-10 text-slate-700 font-normal">{faq.answer}</p>
                   </div>
                 )}
               </div>
@@ -429,7 +456,7 @@ export function ResourcesView({ setCurrentTab }: ResourcesViewProps) {
         </div>
 
         {filteredFaqs.length === 0 && (
-          <div className="text-center py-12 text-gray-500 text-xs">
+          <div className="text-center py-12 text-slate-500 text-xs bg-slate-50 rounded-2xl border border-dashed border-slate-300">
             No questions found matching your filter criteria.
           </div>
         )}

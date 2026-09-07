@@ -38,14 +38,13 @@ export function NavigationHeader({ currentTab, setCurrentTab }: HeaderProps) {
     <header className="sticky top-0 z-50 w-full bg-[#00051a] border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
         {/* Logo */}
-        <button onClick={() => setCurrentTab('home')} className="flex items-center gap-2 flex-shrink-0">
-          <div className="w-9 h-9 rounded bg-blue-600 flex items-center justify-center">
-            <span className="text-white font-black text-xs tracking-tighter leading-none">ICE<br/>LINK</span>
-          </div>
-          <div className="hidden sm:flex flex-col leading-none">
-            <span className="text-white font-black text-sm tracking-widest">ICELINK</span>
-            <span className="text-blue-400 font-bold text-[9px] tracking-widest">GLOBAL</span>
-          </div>
+        <button onClick={() => setCurrentTab('home')} className="flex items-center gap-3 flex-shrink-0 group">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/logo.png"
+            alt="IceLink Global Logo"
+            className="h-10 w-auto object-contain drop-shadow-[0_2px_10px_rgba(59,130,246,0.3)] group-hover:scale-105 transition-transform duration-300"
+          />
         </button>
 
         {/* Desktop Nav */}

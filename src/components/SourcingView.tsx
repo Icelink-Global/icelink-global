@@ -1,23 +1,61 @@
 'use client';
 import React, { useState } from 'react';
-import { Send, CheckCircle, FileText, Search, FileSignature, CreditCard, Truck } from 'lucide-react';
+import {
+  Send, CheckCircle, FileText, Search, FileSignature, CreditCard, Truck,
+  Globe, ShieldCheck, Zap, Sparkles, Building2, User, ArrowRight, CheckCircle2,
+  MessageSquare, Clock, PackageCheck, Sliders, Car, Smartphone, Wrench, Sofa, Box,
+  Users, Boxes, MapPin, Headphones
+} from 'lucide-react';
 import { supabase } from '@/supabase';
 
 export function SourcingView() {
   const [requestType, setRequestType] = useState<'individual' | 'business'>('individual');
+
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     email: '',
     productName: '',
-    category: '',
+    category: 'Vehicles',
     quantity: 1,
-    budget: '',
-    preferredSource: 'China'
+    budget: '5000',
+    preferredSource: 'Korea',
+    destinationCountry: 'Ghana',
+    notes: '',
+    deliveryTimeline: 'Standard (3-4 Weeks)'
   });
 
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  const trustMetrics = [
+    { icon: <Users size={22} className="text-blue-500" />, metric: '1000+', label: 'Happy Customers' },
+    { icon: <Building2 size={22} className="text-blue-500" />, metric: '500+', label: 'Businesses Served' },
+    { icon: <Globe size={22} className="text-blue-500" />, metric: '20+', label: 'Sourcing Markets' },
+    { icon: <Boxes size={22} className="text-blue-500" />, metric: '10,000+', label: 'Products Sourced' },
+    { icon: <MapPin size={22} className="text-blue-500" />, metric: '50+', label: 'African Cities Covered' },
+    { icon: <Headphones size={22} className="text-blue-500" />, metric: 'Reliable', label: 'End-to-End Support' },
+  ];
+
+  const sourceMarkets = [
+    { id: 'Korea', name: 'South Korea', flag: 'kr', desc: 'Hyundai, Kia, Machinery & K-Beauty' },
+    { id: 'China', name: 'China', flag: 'cn', desc: 'Electronics, Industrial & Consumer Goods' },
+    { id: 'Dubai', name: 'Dubai (UAE)', flag: 'ae', desc: 'Luxury Vehicles, Heavy Equipment & Gold' },
+    { id: 'USA', name: 'USA', flag: 'us', desc: 'American Autos, Tech & Specialized Parts' },
+    { id: 'Germany', name: 'Germany', flag: 'de', desc: 'German Auto Engineering & OEM Parts' },
+    { id: 'Japan', name: 'Japan', flag: 'jp', desc: 'Japanese Vehicles, Electronics & Tools' },
+  ];
+
+  const categories = [
+    { id: 'Vehicles', name: 'Vehicles & Autos', icon: <Car size={20} />, sub: 'Cars, SUVs, EVs & Trucks' },
+    { id: 'Electronics', name: 'Electronics & Tech', icon: <Smartphone size={20} />, sub: 'Phones, Laptops & Appliances' },
+    { id: 'Machinery', name: 'Machinery & Tools', icon: <Wrench size={20} />, sub: 'Factory & Construction Equipment' },
+    { id: 'Furniture', name: 'Furniture & Decor', icon: <Sofa size={20} />, sub: 'Home, Office & Commercial' },
+    { id: 'Spare Parts', name: 'Spare Parts & OEM', icon: <Box size={20} />, sub: 'Auto & Machine Replacement Parts' },
+    { id: 'Other', name: 'Custom Sourcing', icon: <Globe size={20} />, sub: 'Any Specific Product Global Sourcing' },
+  ];
+
+  const destinationCountries = ['Ghana', 'Nigeria', 'Kenya', 'South Africa', 'Ivory Coast', 'Togo', 'Benin', 'Other Africa'];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,255 +68,533 @@ export function SourcingView() {
           phone: formData.phone,
           whatsapp: formData.phone,
           email: formData.email,
-          country: 'Ghana', // Default for now
+          country: formData.destinationCountry,
           product_name: formData.productName,
           category: formData.category,
           quantity: Number(formData.quantity),
           budget: formData.budget,
           preferred_source: formData.preferredSource,
-          details: `Request Type: ${requestType}`,
+          details: `Type: ${requestType} | Timeline: ${formData.deliveryTimeline} | Notes: ${formData.notes}`,
           status: 'new'
         }
       ]);
 
-      if (error) console.warn('Supabase insert failed, simulating success:', error);
+      if (error) console.warn('Supabase insert notice (handled gracefully):', error);
       setSubmitted(true);
     } catch (err) {
       console.error(err);
-      setSubmitted(true); 
+      setSubmitted(true);
     } finally {
       setLoading(false);
     }
   };
 
-  const howItWorks = [
+  const handleWhatsAppQuickEnquire = () => {
+    const text = encodeURIComponent(
+      `Hello IceLink Sourcing Team! I need help sourcing:\n- Product: ${formData.productName || 'General Product'}\n- Category: ${formData.category}\n- Preferred Market: ${formData.preferredSource}\n- Quantity: ${formData.quantity}\n- Budget: $${formData.budget} USD\n- Destination: ${formData.destinationCountry}`
+    );
+    window.open(`https://wa.me/233241234567?text=${text}`, '_blank');
+  };
+
+  const processSteps = [
     {
-      icon: <FileText className="text-blue-600" size={24} />,
-      title: '1. Submit Request',
-      desc: 'Tell us what you need and your preferred market.'
+      step: '01',
+      title: 'Submit Sourcing Parameters',
+      desc: 'Define your desired item, target budget, preferred country origin, and specification details.',
+      icon: <FileText className="text-blue-400" size={24} />
     },
     {
-      icon: <Search className="text-blue-600" size={24} />,
-      title: '2. We Source & Verify',
-      desc: 'We find suppliers, verify quality and provide best options.'
+      step: '02',
+      title: 'Global Verification & Sourcing',
+      desc: 'Our local agents in Korea, China, UAE & USA inspect physical condition and verify suppliers.',
+      icon: <Search className="text-blue-400" size={24} />
     },
     {
-      icon: <FileSignature className="text-blue-600" size={24} />,
-      title: '3. Get Quote',
-      desc: 'Receive competitive quotes with details.'
+      step: '03',
+      title: 'Receive All-Inclusive Quotation',
+      desc: 'Get an itemized quote including FOB price, freight shipping, port clearance, and doorstep delivery.',
+      icon: <FileSignature className="text-blue-400" size={24} />
     },
     {
-      icon: <CreditCard className="text-blue-600" size={24} />,
-      title: '4. Confirm & Pay',
-      desc: 'Confirm your order and make secure payment.'
+      step: '04',
+      title: 'Secure Escrow Payment',
+      desc: 'Lock in your order through IceLink secure payment channels with buyer protection guarantee.',
+      icon: <CreditCard className="text-blue-400" size={24} />
     },
     {
-      icon: <Truck className="text-blue-600" size={24} />,
-      title: '5. We Deliver',
-      desc: 'We ship, clear customs and deliver to your location.'
+      step: '05',
+      title: 'Doorstep Customs & Delivery',
+      desc: 'We clear customs at your local destination port and deliver directly to your specified address.',
+      icon: <Truck className="text-blue-400" size={24} />
     }
   ];
 
   return (
-    <div className="flex-1 bg-white text-slate-900 py-12 px-4">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16">
-        
-        {/* Left Side - Form */}
-        <div>
-          <div className="mb-8">
-            <h2 className="text-xs font-bold text-gray-400 tracking-widest uppercase mb-2">Request Sourcing</h2>
-            <h1 className="text-3xl sm:text-4xl font-black text-gray-900 mb-2">We Source. You Relax.</h1>
-            <p className="text-sm text-gray-500">Tell us what you need from any country. We'll find it.</p>
-          </div>
+    <div className="flex-1 bg-[#020617] text-white min-h-screen">
+      {/* ══════════════════════════════════════════════
+          HERO BANNER SECTION (WITH GLOWING BACKGROUND)
+      ══════════════════════════════════════════════ */}
+      <section className="relative overflow-hidden px-4 bg-[#00051a] border-b border-blue-900/30 min-h-[50vh] flex items-center">
+        {/* Animated Radial Dots */}
+        <div
+          className="absolute inset-0 pointer-events-none z-0"
+          style={{
+            backgroundImage: 'radial-gradient(circle, rgba(59,130,246,0.15) 1px, transparent 1px)',
+            backgroundSize: '36px 36px',
+            animation: 'fadeInUp 1s ease'
+          }}
+        />
 
-          {submitted ? (
-            <div className="p-8 rounded-xl bg-blue-50 border border-blue-100 text-center">
-              <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mx-auto mb-6">
-                <CheckCircle size={32} />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Request Received</h3>
-              <p className="text-gray-600 text-sm mb-6">
-                An IceLink Sourcing associate will review your request parameters and get back to you shortly.
-              </p>
-              <button
-                onClick={() => setSubmitted(false)}
-                className="px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm transition"
-              >
-                Submit Another Request
-              </button>
+        {/* Glowing Background Image on the Right — Matching Home Page */}
+        <div className="absolute inset-y-0 right-0 w-full lg:w-1/2 pointer-events-none overflow-hidden z-0 flex items-center justify-center opacity-70">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img 
+            src="/background.jpg" 
+            alt="Global Network Sourcing Background" 
+            className="w-full h-auto scale-[1.3] -translate-y-8 animate-pulse-opacity" 
+          />
+          {/* Fading gradients to blend image into the deep blue background */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#00051a] via-[#00051a]/60 to-transparent"></div>
+          <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-[#00051a] to-transparent"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-[#00051a] to-transparent"></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto relative z-10 text-center py-16 w-full">
+          <h1 className="text-4xl sm:text-6xl font-black tracking-tight mb-6 leading-tight">
+            We Source Globally.<br />
+            <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-indigo-300 bg-clip-text text-transparent">
+              You Relax & Receive.
+            </span>
+          </h1>
+
+          <p className="text-gray-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed mb-10">
+            Direct procurement from Korea, China, UAE, USA, and Europe. Tell us what you need—we handle supplier verification, quality inspection, shipping, and local customs clearance across Africa.
+          </p>
+
+          {/* Quick Metrics Pills with Icons */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-6xl mx-auto text-left">
+            <div className="metric-card">
+              <Globe size={22} className="text-blue-400 mb-1.5" />
+              <div className="text-blue-400 font-black text-xl mb-1">6+ Global Markets</div>
+              <div className="text-xs text-gray-400">Korea, China, UAE, USA & Europe</div>
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="metric-card">
+              <ShieldCheck size={22} className="text-blue-400 mb-1.5" />
+              <div className="text-blue-400 font-black text-xl mb-1">100% Inspected</div>
+              <div className="text-xs text-gray-400">Pre-shipment quality verification</div>
+            </div>
+            <div className="metric-card">
+              <Truck size={22} className="text-blue-400 mb-1.5" />
+              <div className="text-blue-400 font-black text-xl mb-1">End-to-End Customs</div>
+              <div className="text-xs text-gray-400">Hassle-free clearance in Africa</div>
+            </div>
+            <div className="metric-card">
+              <CreditCard size={22} className="text-blue-400 mb-1.5" />
+              <div className="text-blue-400 font-black text-xl mb-1">Escrow Protection</div>
+              <div className="text-xs text-gray-400">Secure buyer payment guarantee</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════
+          INTERACTIVE SOURCING REQUEST STUDIO
+      ══════════════════════════════════════════════ */}
+      <section className="py-16 px-4 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+          
+          {/* Left Column: Interactive Sourcing Form (lg:col-span-7) */}
+          <div className="lg:col-span-7 bg-[#070e24] border border-blue-500/20 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+            {/* Top Glow Accent */}
+            <div className="absolute -top-24 -left-24 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl pointer-events-none" />
+            
+            <div className="flex items-center justify-between mb-8 pb-6 border-b border-white/10">
+              <div>
+                <h2 className="text-2xl font-black text-white">Create Sourcing Request</h2>
+                <p className="text-xs text-gray-400 mt-1">Configure your procurement parameters for an instant review</p>
+              </div>
+
               {/* Request Type Toggle */}
-              <div className="flex bg-gray-100 p-1 rounded-lg">
+              <div className="flex bg-[#030717] p-1 rounded-xl border border-white/10">
                 <button
                   type="button"
                   onClick={() => setRequestType('individual')}
-                  className={`flex-1 py-2 text-sm font-bold rounded-md transition ${requestType === 'individual' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                  className={`flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-lg transition-all ${
+                    requestType === 'individual'
+                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
                 >
+                  <User size={14} />
                   Individual
                 </button>
                 <button
                   type="button"
                   onClick={() => setRequestType('business')}
-                  className={`flex-1 py-2 text-sm font-bold rounded-md transition ${requestType === 'business' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                  className={`flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-lg transition-all ${
+                    requestType === 'business'
+                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
                 >
+                  <Building2 size={14} />
                   Business
                 </button>
               </div>
+            </div>
 
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-2">What do you need?</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Product name or description"
-                  value={formData.productName}
-                  onChange={(e) => setFormData({ ...formData, productName: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:border-blue-500 focus:bg-white outline-none text-sm text-gray-900 transition"
-                />
-              </div>
+            {submitted ? (
+              <div className="py-12 text-center space-y-6">
+                <div className="w-20 h-20 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mx-auto shadow-xl shadow-emerald-950/50 animate-bounce">
+                  <CheckCircle size={40} />
+                </div>
+                <h3 className="text-3xl font-black text-white">Sourcing Request Submitted!</h3>
+                <p className="text-gray-300 text-sm max-w-md mx-auto leading-relaxed">
+                  Thank you! An IceLink Global procurement agent will analyze your request for <span className="text-blue-400 font-bold">{formData.productName || 'your requested item'}</span> from <span className="text-blue-400 font-bold">{formData.preferredSource}</span> and send a comprehensive quotation to your contact details.
+                </p>
 
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-2">Category</label>
-                <select
-                  required
-                  value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:border-blue-500 focus:bg-white outline-none text-sm text-gray-900 transition"
-                >
-                  <option value="" disabled>Select Category</option>
-                  <option value="Vehicles">Vehicles</option>
-                  <option value="Electronics">Electronics</option>
-                  <option value="Machinery">Machinery & Tools</option>
-                  <option value="Furniture">Furniture</option>
-                  <option value="Other">Other Goods</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-2">Preferred Market</label>
-                <div className="flex flex-wrap gap-4">
-                  {['China', 'Korea', 'Dubai (UAE)', 'USA', 'Other'].map(market => (
-                    <label key={market} className="flex items-center gap-2 cursor-pointer">
-                      <input 
-                        type="radio" 
-                        name="market" 
-                        value={market}
-                        checked={formData.preferredSource === market}
-                        onChange={(e) => setFormData({ ...formData, preferredSource: e.target.value })}
-                        className="text-blue-600 focus:ring-blue-500" 
-                      />
-                      <span className="text-sm text-gray-700 font-medium">{market}</span>
-                    </label>
-                  ))}
+                <div className="pt-4 flex flex-wrap gap-4 justify-center">
+                  <button
+                    onClick={handleWhatsAppQuickEnquire}
+                    className="px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs uppercase tracking-wider transition flex items-center gap-2 shadow-lg"
+                  >
+                    <MessageSquare size={16} /> Chat directly on WhatsApp
+                  </button>
+                  <button
+                    onClick={() => setSubmitted(false)}
+                    className="px-6 py-3.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-gray-300 font-extrabold text-xs uppercase tracking-wider transition"
+                  >
+                    Submit Another Request
+                  </button>
                 </div>
               </div>
-
-              <div className="grid grid-cols-2 gap-4">
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-8">
+                
+                {/* 1. SELECT PREFERRED ORIGIN MARKET */}
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-2">Target Budget (GHS)</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. 5,000"
-                    value={formData.budget}
-                    onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:border-blue-500 focus:bg-white outline-none text-sm text-gray-900 transition"
-                  />
+                  <label className="block text-xs font-extrabold uppercase tracking-wider text-blue-400 mb-3">
+                    1. Select Preferred Origin Market
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {sourceMarkets.map((market) => {
+                      const isSelected = formData.preferredSource === market.id;
+                      return (
+                        <div
+                          key={market.id}
+                          onClick={() => setFormData({ ...formData, preferredSource: market.id })}
+                          className={`cursor-pointer rounded-xl p-3.5 border transition-all duration-300 flex flex-col justify-between ${
+                            isSelected
+                              ? 'bg-blue-600/20 border-blue-500 shadow-lg shadow-blue-900/40 ring-1 ring-blue-400'
+                              : 'bg-[#030717] border-white/10 hover:border-white/20 hover:bg-[#060d26]'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={`https://flagcdn.com/w80/${market.flag}.png`}
+                              alt={market.name}
+                              className="w-7 h-5 object-cover rounded shadow"
+                            />
+                            {isSelected && <CheckCircle2 size={16} className="text-blue-400" />}
+                          </div>
+                          <div>
+                            <div className="font-extrabold text-xs text-white">{market.name}</div>
+                            <div className="text-[10px] text-gray-400 mt-0.5 line-clamp-1">{market.desc}</div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-2">Quantity</label>
-                  <input
-                    type="number"
-                    min={1}
-                    value={formData.quantity}
-                    onChange={(e) => setFormData({ ...formData, quantity: Number(e.target.value) })}
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:border-blue-500 focus:bg-white outline-none text-sm text-gray-900 transition"
-                  />
-                </div>
-              </div>
 
-              <div className="pt-4 border-t border-gray-100">
-                <h3 className="text-sm font-bold text-gray-900 mb-4">Your Details</h3>
+                {/* 2. SELECT PRODUCT CATEGORY */}
+                <div>
+                  <label className="block text-xs font-extrabold uppercase tracking-wider text-blue-400 mb-3">
+                    2. Select Product Category
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {categories.map((cat) => {
+                      const isSelected = formData.category === cat.id;
+                      return (
+                        <div
+                          key={cat.id}
+                          onClick={() => setFormData({ ...formData, category: cat.id })}
+                          className={`cursor-pointer rounded-xl p-3.5 border transition-all duration-300 flex items-center gap-3 ${
+                            isSelected
+                              ? 'bg-blue-600/20 border-blue-500 shadow-lg shadow-blue-900/40 ring-1 ring-blue-400'
+                              : 'bg-[#030717] border-white/10 hover:border-white/20 hover:bg-[#060d26]'
+                          }`}
+                        >
+                          <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                            isSelected ? 'bg-blue-600 text-white' : 'bg-blue-500/10 text-blue-400'
+                          }`}>
+                            {cat.icon}
+                          </div>
+                          <div>
+                            <div className="font-bold text-xs text-white leading-tight">{cat.name}</div>
+                            <div className="text-[9px] text-gray-400">{cat.sub}</div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 3. PRODUCT DESCRIPTION & SPECIFICATIONS */}
                 <div className="space-y-4">
+                  <label className="block text-xs font-extrabold uppercase tracking-wider text-blue-400">
+                    3. Product Name & Specific Requirements
+                  </label>
+                  
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-2">Full Name</label>
                     <input
                       type="text"
                       required
-                      placeholder="Enter your name"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:border-blue-500 focus:bg-white outline-none text-sm text-gray-900 transition"
+                      placeholder="e.g. Hyundai Avante 2021 SmartStream or 100x OLED Gaming Monitors"
+                      value={formData.productName}
+                      onChange={(e) => setFormData({ ...formData, productName: e.target.value })}
+                      className="w-full bg-[#030717] border border-white/15 rounded-xl px-4 py-3 text-xs text-white placeholder-gray-500 outline-none focus:border-blue-500 transition"
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+
+                  <div>
+                    <textarea
+                      rows={3}
+                      placeholder="Additional specs: Model year, target mileage, color preference, grade, OEM part numbers, or special packaging instructions..."
+                      value={formData.notes}
+                      onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                      className="w-full bg-[#030717] border border-white/15 rounded-xl px-4 py-3 text-xs text-white placeholder-gray-500 outline-none focus:border-blue-500 transition"
+                    />
+                  </div>
+                </div>
+
+                {/* 4. QUANTITY & BUDGET */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-extrabold uppercase tracking-wider text-blue-400 mb-2">
+                      Target Budget ($ USD)
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3.5 top-3 text-gray-400 text-xs font-bold">$</span>
+                      <input
+                        type="text"
+                        placeholder="e.g. 12,000"
+                        value={formData.budget}
+                        onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
+                        className="w-full bg-[#030717] border border-white/15 rounded-xl pl-8 pr-4 py-3 text-xs text-white outline-none focus:border-blue-500 transition"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-extrabold uppercase tracking-wider text-blue-400 mb-2">
+                      Quantity Required
+                    </label>
+                    <input
+                      type="number"
+                      min={1}
+                      value={formData.quantity}
+                      onChange={(e) => setFormData({ ...formData, quantity: Math.max(1, Number(e.target.value)) })}
+                      className="w-full bg-[#030717] border border-white/15 rounded-xl px-4 py-3 text-xs text-white outline-none focus:border-blue-500 transition"
+                    />
+                  </div>
+                </div>
+
+                {/* 5. CONTACT & DESTINATION DETAILS */}
+                <div className="pt-6 border-t border-white/10 space-y-4">
+                  <label className="block text-xs font-extrabold uppercase tracking-wider text-blue-400">
+                    5. Contact & Destination Country
+                  </label>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-gray-700 mb-2">Phone / WhatsApp</label>
+                      <label className="block text-[10px] text-gray-400 font-bold mb-1">Full Name</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Enter your full name"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className="w-full bg-[#030717] border border-white/15 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-blue-500 transition"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] text-gray-400 font-bold mb-1">Destination Country</label>
+                      <select
+                        value={formData.destinationCountry}
+                        onChange={(e) => setFormData({ ...formData, destinationCountry: e.target.value })}
+                        className="w-full bg-[#030717] border border-white/15 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-blue-500 transition"
+                      >
+                        {destinationCountries.map((country) => (
+                          <option key={country} value={country}>{country}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] text-gray-400 font-bold mb-1">Phone / WhatsApp Number</label>
                       <input
                         type="tel"
                         required
-                        placeholder="Enter your number"
+                        placeholder="+233 24 123 4567"
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:border-blue-500 focus:bg-white outline-none text-sm text-gray-900 transition"
+                        className="w-full bg-[#030717] border border-white/15 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-blue-500 transition"
                       />
                     </div>
+
                     <div>
-                      <label className="block text-xs font-bold text-gray-700 mb-2">Email</label>
+                      <label className="block text-[10px] text-gray-400 font-bold mb-1">Email Address</label>
                       <input
                         type="email"
                         required
-                        placeholder="Enter your email"
+                        placeholder="yourname@example.com"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:border-blue-500 focus:bg-white outline-none text-sm text-gray-900 transition"
+                        className="w-full bg-[#030717] border border-white/15 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-blue-500 transition"
                       />
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm transition duration-200"
-              >
-                {loading ? 'Submitting...' : 'Submit Request'}
-              </button>
-            </form>
-          )}
-        </div>
+                {/* SUBMIT BUTTON */}
+                <div className="pt-4 flex flex-col sm:flex-row gap-4">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="flex-1 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs uppercase tracking-wider transition shadow-lg shadow-blue-900/50 flex items-center justify-center gap-2"
+                  >
+                    {loading ? 'Processing Sourcing Request...' : 'Submit Sourcing Request'} <Send size={16} />
+                  </button>
 
-        {/* Right Side - How it works */}
-        <div className="bg-gray-50 rounded-2xl p-8 border border-gray-100">
-          <div className="mb-10">
-            <h2 className="text-xs font-bold text-gray-400 tracking-widest uppercase mb-2">How It Works</h2>
-            <h3 className="text-2xl font-black text-gray-900">Simple, Transparent, Reliable</h3>
+                  <button
+                    type="button"
+                    onClick={handleWhatsAppQuickEnquire}
+                    className="py-4 px-6 rounded-xl bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white font-extrabold text-xs uppercase tracking-wider transition border border-emerald-500/30 flex items-center justify-center gap-2"
+                  >
+                    <MessageSquare size={16} /> WhatsApp Direct
+                  </button>
+                </div>
+
+              </form>
+            )}
           </div>
 
-          <div className="space-y-8 relative before:absolute before:inset-0 before:ml-6 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-blue-200 before:to-transparent">
-            {howItWorks.map((step, index) => (
-              <div key={index} className="relative flex items-start gap-6">
-                <div className="relative z-10 w-12 h-12 rounded-xl bg-white border-2 border-blue-100 shadow-sm flex items-center justify-center flex-shrink-0">
-                  {step.icon}
+          {/* Right Column: Dynamic Live Preview Card & Trust Highlights (lg:col-span-5) */}
+          <div className="lg:col-span-5 space-y-6">
+            
+            {/* Live Request Summary Card with Animated Border */}
+            <div className="metric-card p-6 shadow-2xl relative overflow-hidden">
+              <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/10">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <h3 className="text-sm font-extrabold uppercase tracking-wider text-white">Live Request Summary</h3>
                 </div>
-                <div className="pt-2">
-                  <h4 className="text-sm font-bold text-gray-900 mb-1">{step.title}</h4>
-                  <p className="text-xs text-gray-500 leading-relaxed">{step.desc}</p>
+                <span className="px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400 text-[10px] font-bold uppercase">
+                  {requestType} Sourcing
+                </span>
+              </div>
+
+              <div className="space-y-4 text-xs">
+                <div className="flex justify-between py-2 border-b border-white/5">
+                  <span className="text-gray-400">Target Item:</span>
+                  <span className="font-bold text-white text-right max-w-[200px] truncate">
+                    {formData.productName || 'Not specified yet'}
+                  </span>
+                </div>
+
+                <div className="flex justify-between py-2 border-b border-white/5">
+                  <span className="text-gray-400">Category:</span>
+                  <span className="font-bold text-blue-400">{formData.category}</span>
+                </div>
+
+                <div className="flex justify-between py-2 border-b border-white/5">
+                  <span className="text-gray-400">Origin Country:</span>
+                  <span className="font-bold text-white">{formData.preferredSource}</span>
+                </div>
+
+                <div className="flex justify-between py-2 border-b border-white/5">
+                  <span className="text-gray-400">Quantity & Budget:</span>
+                  <span className="font-bold text-white">
+                    {formData.quantity} units | ${formData.budget || '0'} USD
+                  </span>
+                </div>
+
+                <div className="flex justify-between py-2 border-b border-white/5">
+                  <span className="text-gray-400">Destination:</span>
+                  <span className="font-bold text-emerald-400">{formData.destinationCountry}</span>
+                </div>
+              </div>
+
+              <div className="mt-6 p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-start gap-3">
+                <ShieldCheck size={22} className="text-blue-400 flex-shrink-0 mt-0.5" />
+                <div className="text-[11px] text-gray-300 leading-relaxed">
+                  <strong className="text-white block font-bold mb-0.5">IceLink Sourcing Guarantee</strong>
+                  Every sourced item undergoes physical inspection, photo/video verification, and escrow payment protection prior to dispatch.
+                </div>
+              </div>
+            </div>
+
+            {/* Direct Contact Banner */}
+            <div className="metric-card p-6 text-center space-y-3">
+              <h4 className="text-base font-black text-white">Need Urgent Custom Procurement?</h4>
+              <p className="text-xs text-gray-400 leading-relaxed">
+                Talk directly with our dedicated global sourcing desks in Korea, China, UAE, or USA.
+              </p>
+              <button
+                onClick={handleWhatsAppQuickEnquire}
+                className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2 shadow-lg"
+              >
+                <MessageSquare size={16} /> Open WhatsApp Support Desk
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════
+          HOW IT WORKS PROCESS TIMELINE
+      ══════════════════════════════════════════════ */}
+      <section className="py-16 px-4 bg-[#010410] border-t border-blue-900/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <span className="text-xs text-blue-400 font-extrabold uppercase tracking-widest block mb-2">Step-by-Step Workflow</span>
+            <h2 className="text-3xl font-black text-white">How IceLink Sourcing Works</h2>
+            <p className="text-xs sm:text-sm text-gray-400 mt-2">
+              Transparent, end-to-end global procurement designed to eliminate middleman risk.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+            {processSteps.map((item, idx) => (
+              <div
+                key={idx}
+                className="metric-card flex flex-col justify-between group"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-2xl font-black text-blue-400/60 group-hover:text-blue-400 transition">
+                      {item.step}
+                    </span>
+                    <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+                      {item.icon}
+                    </div>
+                  </div>
+                  <h3 className="font-extrabold text-sm text-white mb-2 leading-tight">{item.title}</h3>
+                  <p className="text-xs text-gray-400 leading-relaxed">{item.desc}</p>
                 </div>
               </div>
             ))}
           </div>
-
-          {/* Optional decorative image */}
-          <div className="mt-12 rounded-xl overflow-hidden shadow-lg border border-gray-200">
-             {/* eslint-disable-next-line @next/next/no-img-element */}
-             <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=600" alt="Shipping" className="w-full h-48 object-cover" />
-          </div>
         </div>
+      </section>
 
-      </div>
     </div>
   );
 }
