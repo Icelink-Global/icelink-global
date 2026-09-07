@@ -11,9 +11,9 @@ interface HomeViewProps {
 }
 
 const HERO_BG = 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600&auto=format&fit=crop';
-const AUTOHAUS_IMG = 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=600&auto=format&fit=crop';
-const MARKET_IMG = 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=600&auto=format&fit=crop';
-const SOURCING_IMG = 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=600&auto=format&fit=crop';
+const AUTOHAUS_IMG = '/ah1.jpg';
+const GAMING_IMG = '/ah2.jpg';
+const SOURCING_IMG = '/ah3.jpg';
 
 const CATEGORIES = [
   { name: 'Electronics', sub: 'Phones, TVs, Laptops', img: 'https://images.unsplash.com/photo-1550009158-9c4c4149fa86?q=80&w=300&h=200&fit=crop' },
@@ -156,23 +156,25 @@ export function HomeView({ setCurrentTab, setSelectedProduct }: HomeViewProps) {
                onClick={() => setCurrentTab('autohaus')}>
             <div className="p-6 pb-8 flex flex-col h-full rounded-2xl">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-14 h-14 rounded-full bg-[#0d47a1] flex items-center justify-center flex-shrink-0 shadow-inner">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img 
-                    src="https://images.vexels.com/media/users/3/155413/isolated/preview/02fa4279f1759a65b62bafe7caf5be32-suv-car-front-view-silhouette.png" 
-                    alt="Car Icon"
-                    className="w-8 h-8 object-contain brightness-0 invert"
-                  />
+                <div className="animated-border-card flex-shrink-0" style={{ '--card-border-color': '#0d47a1', '--card-radius': '9999px', '--card-bg': '#ffffff' } as React.CSSProperties}>
+                  <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center shadow-sm">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img 
+                      src="/autohaus-logo.png" 
+                      alt="Ice AutoHaus Logo"
+                      className="w-[80%] h-[80%] object-contain"
+                    />
+                  </div>
                 </div>
                 <div>
                   <h3 className="font-black text-[#0d47a1] text-xl leading-tight">Ice AutoHaus</h3>
                   <p className="text-slate-800 text-xs mt-1 font-medium leading-snug">Vehicles, EVs, Trucks, Spare<br/>Parts & Accessories</p>
                 </div>
               </div>
-              <div className="h-[1px] w-full bg-[#0d47a1] mb-6 rounded-full"></div>
-              <div className="relative h-56 rounded-xl overflow-hidden bg-slate-50 mb-8 w-full flex items-center justify-center">
+              <div className="h-[1px] w-full bg-[#0d47a1] mb-0 rounded-full"></div>
+              <div className="relative h-56 rounded-b-xl overflow-hidden bg-slate-50 mb-8 w-full flex items-center justify-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={AUTOHAUS_IMG} alt="Ice AutoHaus vehicles" className="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition duration-500" />
+                <img src={AUTOHAUS_IMG} alt="Ice AutoHaus vehicles" className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
               </div>
               <button className="flex items-center justify-center gap-1 sm:gap-2 px-3 py-2.5 sm:px-6 sm:py-3.5 rounded-lg sm:rounded-xl bg-[#0d47a1] hover:bg-blue-800 text-white font-bold text-[10px] sm:text-sm transition w-[60%] mt-auto whitespace-nowrap">
                 Explore AutoHaus <ArrowRight size={16} />
@@ -180,7 +182,7 @@ export function HomeView({ setCurrentTab, setSelectedProduct }: HomeViewProps) {
             </div>
           </div>
 
-          {/* IceLink Market */}
+          {/* IceLink Market / Gaming */}
           <div className="animated-border-card cursor-pointer group hover:-translate-y-1 transition duration-300 shadow-[0_-15px_30px_-15px_rgba(0,0,0,0.3)]" 
                style={{ '--card-border-color': '#1b5e20', '--card-radius': '16px', '--card-bg': '#ffffff' } as React.CSSProperties}
                onClick={() => setCurrentTab('market')}>
@@ -191,13 +193,13 @@ export function HomeView({ setCurrentTab, setSelectedProduct }: HomeViewProps) {
                 </div>
                 <div>
                   <h3 className="font-black text-[#1b5e20] text-xl leading-tight">IceLink Market</h3>
-                  <p className="text-slate-800 text-xs mt-1 font-medium leading-snug">Electronics, Furniture, Appliances<br/>& General Goods</p>
+                  <p className="text-slate-800 text-xs mt-1 font-medium leading-snug">Electronics, Gaming, Appliances<br/>& General Goods</p>
                 </div>
               </div>
-              <div className="h-[1px] w-full bg-[#1b5e20] mb-6 rounded-full"></div>
-              <div className="relative h-56 rounded-xl overflow-hidden bg-slate-50 mb-8 w-full flex items-center justify-center">
+              <div className="h-[1px] w-full bg-[#1b5e20] mb-0 rounded-full"></div>
+              <div className="relative h-56 rounded-b-xl overflow-hidden bg-slate-50 mb-8 w-full flex items-center justify-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={MARKET_IMG} alt="IceLink Market goods" className="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition duration-500" />
+                <img src={GAMING_IMG} alt="Ice Electronics & Gaming" className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
               </div>
               <button className="flex items-center justify-center gap-1 sm:gap-2 px-3 py-2.5 sm:px-6 sm:py-3.5 rounded-lg sm:rounded-xl bg-[#1b5e20] hover:bg-green-800 text-white font-bold text-[10px] sm:text-sm transition w-[60%] mt-auto whitespace-nowrap">
                 Explore Market <ArrowRight size={16} />
@@ -219,10 +221,10 @@ export function HomeView({ setCurrentTab, setSelectedProduct }: HomeViewProps) {
                   <p className="text-slate-800 text-xs mt-1 font-medium leading-snug">Source Anything, Anywhere.<br/>We find, verify and deliver.</p>
                 </div>
               </div>
-              <div className="h-[1px] w-full bg-[#e65100] mb-6 rounded-full relative z-10"></div>
-              <div className="relative h-56 rounded-xl overflow-hidden bg-slate-50 mb-8 w-full flex items-center justify-center z-10">
+              <div className="h-[1px] w-full bg-[#e65100] mb-0 rounded-full relative z-10"></div>
+              <div className="relative h-56 rounded-b-xl overflow-hidden bg-slate-50 mb-8 w-full flex items-center justify-center z-10">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={SOURCING_IMG} alt="IceLink Sourcing" className="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition duration-500" />
+                <img src={SOURCING_IMG} alt="IceLink Sourcing" className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
               </div>
               <button className="relative z-10 flex items-center justify-center gap-1 sm:gap-2 px-3 py-2.5 sm:px-6 sm:py-3.5 rounded-lg sm:rounded-xl bg-[#e65100] hover:bg-orange-800 text-white font-bold text-[10px] sm:text-sm transition w-[60%] mt-auto whitespace-nowrap">
                 Request Sourcing <ArrowRight size={16} />

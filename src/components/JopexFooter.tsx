@@ -1,6 +1,18 @@
 import React from 'react';
 
-export function JopexFooter() {
+interface FooterProps {
+  setCurrentTab?: (tab: string) => void;
+}
+
+export function JopexFooter({ setCurrentTab }: FooterProps) {
+  const handleNav = (tab: string, e: React.MouseEvent) => {
+    if (setCurrentTab) {
+      e.preventDefault();
+      setCurrentTab(tab);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   return (
     <footer className="footer bg-[#00051a] border-t border-white/10 px-8 py-14 relative overflow-hidden text-gray-400">
       {/* Background Image */}
@@ -16,7 +28,7 @@ export function JopexFooter() {
       </div>
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-10 mb-10 relative z-10">
         <div className="footer-brand flex flex-col gap-5 md:col-span-2">
-          <div className="footer-logo flex items-center gap-3">
+          <div className="footer-logo flex items-center gap-3 cursor-pointer" onClick={(e) => handleNav('home', e)}>
             <div className="w-11 h-11 bg-blue-600 rounded flex items-center justify-center font-black text-white text-base tracking-widest">
               ILG
             </div>
@@ -47,30 +59,30 @@ export function JopexFooter() {
         <div className="footer-section">
           <h4 className="text-white text-sm font-semibold mb-5 tracking-wider uppercase">Businesses</h4>
           <div className="footer-links flex flex-col gap-2.5 text-sm">
-            <a href="#" className="hover:text-blue-500 transition-all duration-300 hover:pl-2">Ice AutoHaus</a>
-            <a href="#" className="hover:text-blue-500 transition-all duration-300 hover:pl-2">Ice Electronics</a>
-            <a href="#" className="hover:text-blue-500 transition-all duration-300 hover:pl-2">Ice Gaming</a>
-            <a href="#" className="hover:text-blue-500 transition-all duration-300 hover:pl-2">IceLink Market</a>
+            <button onClick={(e) => handleNav('autohaus', e)} className="text-left hover:text-blue-500 transition-all duration-300 hover:pl-2">Ice AutoHaus</button>
+            <button onClick={(e) => handleNav('electronics-gaming', e)} className="text-left hover:text-blue-500 transition-all duration-300 hover:pl-2">Ice Electronics</button>
+            <button onClick={(e) => handleNav('electronics-gaming', e)} className="text-left hover:text-blue-500 transition-all duration-300 hover:pl-2">Ice Gaming</button>
+            <button onClick={(e) => handleNav('market', e)} className="text-left hover:text-blue-500 transition-all duration-300 hover:pl-2">IceLink Market</button>
           </div>
         </div>
 
         <div className="footer-section">
           <h4 className="text-white text-sm font-semibold mb-5 tracking-wider uppercase">Sourcing Markets</h4>
           <div className="footer-links flex flex-col gap-2.5 text-sm">
-            <a href="#" className="hover:text-blue-500 transition-all duration-300 hover:pl-2">South Korea</a>
-            <a href="#" className="hover:text-blue-500 transition-all duration-300 hover:pl-2">China</a>
-            <a href="#" className="hover:text-blue-500 transition-all duration-300 hover:pl-2">Dubai / UAE</a>
-            <a href="#" className="hover:text-blue-500 transition-all duration-300 hover:pl-2">USA & Europe</a>
+            <button onClick={(e) => handleNav('sourcing', e)} className="text-left hover:text-blue-500 transition-all duration-300 hover:pl-2">South Korea</button>
+            <button onClick={(e) => handleNav('sourcing', e)} className="text-left hover:text-blue-500 transition-all duration-300 hover:pl-2">China</button>
+            <button onClick={(e) => handleNav('sourcing', e)} className="text-left hover:text-blue-500 transition-all duration-300 hover:pl-2">Dubai / UAE</button>
+            <button onClick={(e) => handleNav('sourcing', e)} className="text-left hover:text-blue-500 transition-all duration-300 hover:pl-2">USA & Europe</button>
           </div>
         </div>
 
         <div className="footer-section">
           <h4 className="text-white text-sm font-semibold mb-5 tracking-wider uppercase">Resources</h4>
           <div className="footer-links flex flex-col gap-2.5 text-sm">
-            <a href="#" className="hover:text-blue-500 transition-all duration-300 hover:pl-2">Order Tracking</a>
-            <a href="#" className="hover:text-blue-500 transition-all duration-300 hover:pl-2">Inspection Status</a>
-            <a href="#" className="hover:text-blue-500 transition-all duration-300 hover:pl-2">About Us</a>
-            <a href="#" className="hover:text-blue-500 transition-all duration-300 hover:pl-2">Contact Support</a>
+            <button onClick={(e) => handleNav('sourcing', e)} className="text-left hover:text-blue-500 transition-all duration-300 hover:pl-2">Order Tracking</button>
+            <button onClick={(e) => handleNav('sourcing', e)} className="text-left hover:text-blue-500 transition-all duration-300 hover:pl-2">Inspection Status</button>
+            <button onClick={(e) => handleNav('home', e)} className="text-left hover:text-blue-500 transition-all duration-300 hover:pl-2">About Us</button>
+            <button onClick={(e) => handleNav('sourcing', e)} className="text-left hover:text-blue-500 transition-all duration-300 hover:pl-2">Contact Support</button>
           </div>
         </div>
       </div>
@@ -86,3 +98,4 @@ export function JopexFooter() {
     </footer>
   );
 }
+
