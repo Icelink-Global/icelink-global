@@ -29,7 +29,8 @@ export function AutoHausView({ setSelectedProduct, setCurrentTab }: AutoHausView
   const heroSlideImages = [
     '/hero-cars/car-slide-1.png',
     '/hero-cars/car-slide-3.png',
-    '/hero-cars/car-slide-4.png'
+    '/hero-cars/car-slide-4.png',
+    '/hero-cars/new image.png'
   ];
   const [currentHeroSlide, setCurrentHeroSlide] = useState(0);
   // phase: 'hidden' | 'entering' | 'visible' | 'fading'
@@ -137,8 +138,8 @@ export function AutoHausView({ setSelectedProduct, setCurrentTab }: AutoHausView
         />
 
         {/* Right Side Hero Images — Slides in from complete right edge, waits 5s, fades out 5s */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden z-10 flex items-center justify-end">
-          <div className="relative w-full lg:w-1/2 h-full flex items-center justify-start overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
+          <div className="absolute top-0 bottom-0 left-1/2 right-0 flex items-center justify-start">
             {heroSlideImages.map((imgSrc, idx) => {
               const isActive = idx === currentHeroSlide;
 
@@ -156,7 +157,7 @@ export function AutoHausView({ setSelectedProduct, setCurrentTab }: AutoHausView
                   // Slide in from right
                   translateClass = 'translate-x-0';
                   opacityClass = 'opacity-100';
-                  transitionClass = 'transition-transform duration-[900ms] ease-out';
+                  transitionClass = 'transition-transform duration-[500ms] ease-out';
                 } else if (heroPhase === 'visible') {
                   translateClass = 'translate-x-0';
                   opacityClass = 'opacity-100';
@@ -173,7 +174,7 @@ export function AutoHausView({ setSelectedProduct, setCurrentTab }: AutoHausView
                   key={imgSrc}
                   src={imgSrc}
                   alt={`Featured Hero Vehicle ${idx + 1}`}
-                  className={`absolute w-full h-full object-contain object-left scale-[0.85] transform origin-left drop-shadow-[0_20px_45px_rgba(59,130,246,0.35)] ${
+                  className={`absolute w-full h-full object-contain object-left scale-[0.95] transform origin-left drop-shadow-[0_20px_45px_rgba(59,130,246,0.35)] ${
                     isActive ? 'z-10' : 'z-0'
                   } ${translateClass} ${opacityClass} ${transitionClass}`}
                 />
