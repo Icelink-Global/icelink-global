@@ -137,3 +137,16 @@ html {
 .animate-spin-slow {
   animation: spin-slow 25s linear infinite;
 }
+
+@keyframes subtle-shake {
+  0%, 85%, 100% { transform: scale(1) rotate(0deg); }
+  88% { transform: scale(1.05) rotate(-3deg); }
+  91% { transform: scale(1.05) rotate(3deg); }
+  94% { transform: scale(1.05) rotate(-2deg); }
+  97% { transform: scale(1.05) rotate(2deg); }
+}
+
+.animate-subtle-shake {
+  animation: subtle-shake 3s ease-in-out infinite;
+}
+

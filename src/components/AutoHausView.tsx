@@ -28,13 +28,11 @@ export function AutoHausView({ setSelectedProduct, setCurrentTab }: AutoHausView
 
   const heroSlideImages = [
     '/hero-cars/car-slide-1.png',
+    '/hero-cars/car-slide-2.png',
     '/hero-cars/car-slide-3.png',
-    '/hero-cars/car-slide-4.png',
-    '/hero-cars/new image.png'
+    '/hero-cars/car-slide-4.png'
   ];
   const [currentHeroSlide, setCurrentHeroSlide] = useState(0);
-  // phase: 'hidden' | 'entering' | 'visible' | 'fading'
-  const [heroPhase, setHeroPhase] = useState<'hidden' | 'entering' | 'visible' | 'fading'>('hidden');
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -44,26 +42,11 @@ export function AutoHausView({ setSelectedProduct, setCurrentTab }: AutoHausView
   }, [bgImages.length]);
 
   useEffect(() => {
-    // Reset to hidden (off-screen right, no transition) so the slide-in can animate
-    setHeroPhase('hidden');
-
-    // One frame later: start sliding in from right
-    const t0 = setTimeout(() => setHeroPhase('entering'), 50);
-    // After slide-in (900ms) + 5s wait: start fade out
-    const t1 = setTimeout(() => setHeroPhase('visible'), 950);
-    const t2 = setTimeout(() => setHeroPhase('fading'), 950 + 5000);
-    // After fade (5s): advance to next slide
-    const t3 = setTimeout(() => {
+    const timer = setInterval(() => {
       setCurrentHeroSlide((prev) => (prev + 1) % heroSlideImages.length);
-    }, 950 + 5000 + 5000);
-
-    return () => {
-      clearTimeout(t0);
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
-    };
-  }, [currentHeroSlide, heroSlideImages.length]);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [heroSlideImages.length]);
 
   // Sourcing form state
   const [sourcingForm, setSourcingForm] = useState({
@@ -137,36 +120,18 @@ export function AutoHausView({ setSelectedProduct, setCurrentTab }: AutoHausView
           }}
         />
 
-        {/* Right Side Hero Images — Slides in from complete right edge, waits 5s, fades out 5s */}
+        {/* Right Side Hero Images — Smooth crossfade transition */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
           <div className="absolute top-0 bottom-0 left-1/2 right-0 flex items-center justify-start">
             {heroSlideImages.map((imgSrc, idx) => {
               const isActive = idx === currentHeroSlide;
-
-              let translateClass = 'translate-x-[100vw]';
-              let opacityClass = 'opacity-0';
-              let transitionClass = 'transition-none';
-
+              const isPrev = idx === (currentHeroSlide - 1 + heroSlideImages.length) % heroSlideImages.length;
+              
+              let styleClass = 'opacity-0 translate-x-[20vw] z-0'; // Waiting on the right
               if (isActive) {
-                if (heroPhase === 'hidden') {
-                  // Offscreen right, instant (no transition) — browser paints here first
-                  translateClass = 'translate-x-[100vw]';
-                  opacityClass = 'opacity-100';
-                  transitionClass = 'transition-none';
-                } else if (heroPhase === 'entering') {
-                  // Slide in from right
-                  translateClass = 'translate-x-0';
-                  opacityClass = 'opacity-100';
-                  transitionClass = 'transition-transform duration-[500ms] ease-out';
-                } else if (heroPhase === 'visible') {
-                  translateClass = 'translate-x-0';
-                  opacityClass = 'opacity-100';
-                  transitionClass = 'transition-none';
-                } else if (heroPhase === 'fading') {
-                  translateClass = 'translate-x-0';
-                  opacityClass = 'opacity-0';
-                  transitionClass = 'transition-opacity duration-[5000ms] ease-in-out';
-                }
+                styleClass = 'opacity-100 translate-x-0 z-10'; // Active in center
+              } else if (isPrev) {
+                styleClass = 'opacity-0 -translate-x-[10vw] z-0'; // Fading out to the left
               }
 
               return (
@@ -174,9 +139,7 @@ export function AutoHausView({ setSelectedProduct, setCurrentTab }: AutoHausView
                   key={imgSrc}
                   src={imgSrc}
                   alt={`Featured Hero Vehicle ${idx + 1}`}
-                  className={`absolute w-full h-full object-contain object-left scale-[0.95] transform origin-left drop-shadow-[0_20px_45px_rgba(59,130,246,0.35)] ${
-                    isActive ? 'z-10' : 'z-0'
-                  } ${translateClass} ${opacityClass} ${transitionClass}`}
+                  className={`absolute w-full h-full object-contain object-left scale-[0.95] transform origin-left drop-shadow-[0_20px_45px_rgba(59,130,246,0.35)] transition-all duration-[2500ms] ease-in-out ${styleClass}`}
                 />
               );
             })}

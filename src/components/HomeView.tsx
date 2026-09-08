@@ -1,5 +1,5 @@
 'use client';
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import {
   ArrowRight, Car, ShoppingBag, Globe, Users, Building2,
   PackageSearch, Boxes, MapPin, Headphones, ChevronLeft, ChevronRight
@@ -45,6 +45,85 @@ const SOURCE_MARKETS = [
 
 export function HomeView({ setCurrentTab, setSelectedProduct }: HomeViewProps) {
   const carouselRef = useRef<HTMLDivElement>(null);
+  const marqueeRef = useRef<HTMLDivElement>(null);
+  const animFrameRef = useRef<number | null>(null);
+  const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isPausedRef = useRef(false);
+  const speedRef = useRef(0.6); // px per frame
+
+  const startAutoScroll = useCallback(() => {
+    const el = marqueeRef.current;
+    if (!el) return;
+    const step = () => {
+      if (!isPausedRef.current && el) {
+        el.scrollLeft += speedRef.current;
+        // Loop: when scrolled past half (since items are duplicated 4x), reset to same visual position
+        if (el.scrollLeft >= el.scrollWidth / 2) {
+          el.scrollLeft -= el.scrollWidth / 2;
+        }
+      }
+      animFrameRef.current = requestAnimationFrame(step);
+    };
+    animFrameRef.current = requestAnimationFrame(step);
+  }, []);
+
+  useEffect(() => {
+    startAutoScroll();
+    return () => {
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+      if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+    };
+  }, [startAutoScroll]);
+
+  const pauseAndScheduleResume = () => {
+    isPausedRef.current = true;
+    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+    resumeTimerRef.current = setTimeout(() => {
+      isPausedRef.current = false;
+    }, 3000);
+  };
+
+  // Touch swipe handlers
+  const touchStartX = useRef(0);
+  const touchStartScroll = useRef(0);
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartScroll.current = marqueeRef.current?.scrollLeft ?? 0;
+    pauseAndScheduleResume();
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    const el = marqueeRef.current;
+    if (!el) return;
+    const dx = touchStartX.current - e.touches[0].clientX;
+    el.scrollLeft = touchStartScroll.current + dx;
+  };
+
+  const onTouchEnd = () => pauseAndScheduleResume();
+
+  // Mouse drag handlers
+  const mouseStartX = useRef(0);
+  const mouseStartScroll = useRef(0);
+  const isDragging = useRef(false);
+
+  const onMouseDown = (e: React.MouseEvent) => {
+    isDragging.current = true;
+    mouseStartX.current = e.clientX;
+    mouseStartScroll.current = marqueeRef.current?.scrollLeft ?? 0;
+    pauseAndScheduleResume();
+  };
+
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging.current) return;
+    const el = marqueeRef.current;
+    if (!el) return;
+    const dx = mouseStartX.current - e.clientX;
+    el.scrollLeft = mouseStartScroll.current + dx;
+  };
+
+  const onMouseUp = () => { isDragging.current = false; pauseAndScheduleResume(); };
+  const onMouseLeave = () => { if (isDragging.current) { isDragging.current = false; pauseAndScheduleResume(); } };
 
   const scrollCarousel = (dir: 'left' | 'right') => {
     if (carouselRef.current) {
@@ -156,15 +235,13 @@ export function HomeView({ setCurrentTab, setSelectedProduct }: HomeViewProps) {
                onClick={() => setCurrentTab('autohaus')}>
             <div className="p-6 pb-8 flex flex-col h-full rounded-2xl">
               <div className="flex items-center gap-4 mb-4">
-                <div className="animated-border-card flex-shrink-0" style={{ '--card-border-color': '#0d47a1', '--card-radius': '9999px', '--card-bg': '#ffffff' } as React.CSSProperties}>
-                  <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center shadow-sm">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img 
-                      src="/autohaus-logo.png" 
-                      alt="Ice AutoHaus Logo"
-                      className="w-[80%] h-[80%] object-contain"
-                    />
-                  </div>
+                <div className="w-14 h-14 rounded-full bg-white border-2 border-[#0d47a1] flex items-center justify-center flex-shrink-0 shadow-sm overflow-hidden p-1">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img 
+                    src="/ice-autohaus-new.png" 
+                    alt="Ice AutoHaus Logo"
+                    className="w-full h-full object-contain"
+                  />
                 </div>
                 <div>
                   <h3 className="font-black text-[#0d47a1] text-xl leading-tight">Ice AutoHaus</h3>
@@ -176,7 +253,7 @@ export function HomeView({ setCurrentTab, setSelectedProduct }: HomeViewProps) {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={AUTOHAUS_IMG} alt="Ice AutoHaus vehicles" className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
               </div>
-              <button className="flex items-center justify-center gap-1 sm:gap-2 px-3 py-2.5 sm:px-6 sm:py-3.5 rounded-lg sm:rounded-xl bg-[#0d47a1] hover:bg-blue-800 text-white font-bold text-[10px] sm:text-sm transition w-[60%] mt-auto whitespace-nowrap">
+              <button className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-[#0d47a1] hover:bg-blue-800 text-white font-bold text-xs sm:text-sm transition mt-auto whitespace-nowrap shadow-md">
                 Explore AutoHaus <ArrowRight size={16} />
               </button>
             </div>
@@ -201,7 +278,7 @@ export function HomeView({ setCurrentTab, setSelectedProduct }: HomeViewProps) {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={GAMING_IMG} alt="Ice Electronics & Gaming" className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
               </div>
-              <button className="flex items-center justify-center gap-1 sm:gap-2 px-3 py-2.5 sm:px-6 sm:py-3.5 rounded-lg sm:rounded-xl bg-[#1b5e20] hover:bg-green-800 text-white font-bold text-[10px] sm:text-sm transition w-[60%] mt-auto whitespace-nowrap">
+              <button className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-[#1b5e20] hover:bg-green-800 text-white font-bold text-xs sm:text-sm transition mt-auto whitespace-nowrap shadow-md">
                 Explore Market <ArrowRight size={16} />
               </button>
             </div>
@@ -226,7 +303,7 @@ export function HomeView({ setCurrentTab, setSelectedProduct }: HomeViewProps) {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={SOURCING_IMG} alt="IceLink Sourcing" className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
               </div>
-              <button className="relative z-10 flex items-center justify-center gap-1 sm:gap-2 px-3 py-2.5 sm:px-6 sm:py-3.5 rounded-lg sm:rounded-xl bg-[#e65100] hover:bg-orange-800 text-white font-bold text-[10px] sm:text-sm transition w-[60%] mt-auto whitespace-nowrap">
+              <button className="relative z-10 flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-[#e65100] hover:bg-orange-800 text-white font-bold text-xs sm:text-sm transition mt-auto whitespace-nowrap shadow-md">
                 Request Sourcing <ArrowRight size={16} />
               </button>
             </div>
@@ -252,39 +329,122 @@ export function HomeView({ setCurrentTab, setSelectedProduct }: HomeViewProps) {
       </section>
 
       {/* ══════════════════════════════════════════════
-          POPULAR CATEGORIES — horizontal carousel, square tiles
+          POPULAR CATEGORIES — horizontal carousel, multi-image post cards
       ══════════════════════════════════════════════ */}
       <section className="bg-white py-14">
         <div className="max-w-7xl mx-auto px-4 mb-6">
           <div className="flex justify-between items-center gap-2">
-            <h2 className="text-sm sm:text-lg font-black text-slate-900 leading-tight">Popular Categories in IceLink Market</h2>
-            <button onClick={() => setCurrentTab('market')} className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-6 py-2 sm:py-3 rounded-lg border border-blue-500 text-blue-600 hover:bg-blue-50 font-bold text-[9px] sm:text-sm transition bg-white shadow-sm flex-shrink-0 whitespace-nowrap">
-              View All <span className="hidden sm:inline">Categories</span> <ArrowRight size={12} />
+            <h2 className="text-sm sm:text-lg font-black text-slate-900 leading-tight">Featured Products & Categories</h2>
+            <button onClick={() => setCurrentTab('market')} className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg border border-blue-500 text-blue-600 hover:bg-blue-50 font-bold text-xs sm:text-sm transition bg-white shadow-md flex-shrink-0 whitespace-nowrap">
+              View All Categories <ArrowRight size={16} />
             </button>
           </div>
         </div>
 
-        {/* Looping Carousel — full width with fade edges */}
-        <div className="relative w-full overflow-hidden mt-2">
+        {/* Looping Carousel — swipeable, JS-driven auto-scroll */}
+        <div className="relative w-full mt-2">
           {/* Left Edge Overlay */}
           <div className="absolute left-0 top-0 bottom-0 bg-white z-10 pointer-events-none hidden xl:block xl:w-[calc(50vw-40rem)]"></div>
           <div className="absolute top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none left-0 xl:left-[calc(50vw-40rem)]"></div>
 
-          <div className="flex gap-4 w-max animate-marquee px-4 sm:px-8">
-            {[...CATEGORIES, ...CATEGORIES, ...CATEGORIES, ...CATEGORIES].map((cat, i) => (
-              <div
-                key={`${cat.name}-${i}`}
-                className="flex-shrink-0 w-44 cursor-pointer"
-                onClick={() => setCurrentTab('market')}
-              >
-                <div className="w-full h-52 rounded-xl overflow-hidden border border-slate-100 shadow-sm transition mb-2 hover:border-blue-300 hover:shadow-md">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={cat.img} alt={cat.name} className="w-full h-full object-cover hover:scale-105 transition duration-300" />
+          <div
+            ref={marqueeRef}
+            className="flex gap-5 w-full overflow-x-scroll px-4 sm:px-8 cursor-grab active:cursor-grabbing select-none"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+            onMouseDown={onMouseDown}
+            onMouseMove={onMouseMove}
+            onMouseUp={onMouseUp}
+            onMouseLeave={onMouseLeave}
+          >
+            {[...CATEGORIES, ...CATEGORIES, ...CATEGORIES, ...CATEGORIES].map((cat, i) => {
+              // Layout variant pattern: 0 = 1 img, 1 = 2 img, 2 = 3 img (horizontal), 3 = 3 img (vertical), 4 = 4 img grid
+              const variant = i % 5;
+
+              return (
+                <div
+                  key={`${cat.name}-${i}`}
+                  className="flex-shrink-0 w-60 sm:w-64 cursor-pointer bg-white border border-slate-200/80 rounded-2xl p-3 shadow-sm hover:shadow-lg transition duration-300 flex flex-col justify-between"
+                  onClick={() => setCurrentTab('market')}
+                >
+                  {/* Header info - Only category name */}
+                  <div className="flex items-center gap-2 mb-2.5">
+                    <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-[10px] font-bold shadow-xs flex-shrink-0">
+                      ICE
+                    </div>
+                    <h4 className="text-xs font-bold text-slate-900 truncate leading-tight">{cat.name}</h4>
+                  </div>
+
+                  {/* Multi-image layouts with rounded corners on all image sides */}
+                  <div className="rounded-xl overflow-hidden mb-2.5 bg-slate-100 p-0.5 border border-slate-100">
+                    {/* VARIANT 0: Single Large Image (1x1) - Kept real image */}
+                    {variant === 0 && (
+                      <div className="h-44 rounded-lg overflow-hidden">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={cat.img} alt={cat.name} className="w-full h-full object-cover hover:scale-105 transition duration-500" />
+                      </div>
+                    )}
+
+                    {/* VARIANT 1: 2 Side-by-side Horizontal Images - Colored Placeholders */}
+                    {variant === 1 && (
+                      <div className="grid grid-cols-2 gap-1 h-44">
+                        <div className="h-full rounded-lg bg-blue-200/80 flex items-center justify-center text-[10px] font-semibold text-blue-700">Image 1</div>
+                        <div className="h-full rounded-lg bg-indigo-200/80 flex items-center justify-center text-[10px] font-semibold text-indigo-700">Image 2</div>
+                      </div>
+                    )}
+
+                    {/* VARIANT 2: 3 Images Horizontal Layout - Colored Placeholders */}
+                    {variant === 2 && (
+                      <div className="flex flex-col gap-1 h-44">
+                        <div className="h-[56%] rounded-lg bg-sky-200/80 flex items-center justify-center text-[10px] font-semibold text-sky-700">Top Image (Wide)</div>
+                        <div className="grid grid-cols-2 gap-1 h-[42%]">
+                          <div className="h-full rounded-lg bg-cyan-200/80 flex items-center justify-center text-[10px] font-semibold text-cyan-700">Bottom Left</div>
+                          <div className="h-full rounded-lg bg-teal-200/80 flex items-center justify-center text-[10px] font-semibold text-teal-700">Bottom Right</div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* VARIANT 3: 3 Images Vertical Layout (1 tall left + 2 stacked right) - Colored Placeholders */}
+                    {variant === 3 && (
+                      <div className="grid grid-cols-2 gap-1 h-44">
+                        <div className="h-full rounded-lg bg-emerald-200/80 flex items-center justify-center text-[10px] font-semibold text-emerald-700">Left Tall</div>
+                        <div className="grid grid-rows-2 gap-1 h-full">
+                          <div className="rounded-lg bg-teal-200/80 flex items-center justify-center text-[9px] font-semibold text-teal-700">Top Right</div>
+                          <div className="rounded-lg bg-cyan-200/80 flex items-center justify-center text-[9px] font-semibold text-cyan-700">Bottom Right</div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* VARIANT 4: 4 Grid Images - Colored Placeholders (Auto fill height) */}
+                    {variant === 4 && (
+                      <div className="grid grid-cols-2 grid-rows-2 gap-1 h-44">
+                        <div className="rounded-lg bg-blue-200/80 flex items-center justify-center text-[9px] font-semibold text-blue-700">Img 1</div>
+                        <div className="rounded-lg bg-indigo-200/80 flex items-center justify-center text-[9px] font-semibold text-indigo-700">Img 2</div>
+                        <div className="rounded-lg bg-violet-200/80 flex items-center justify-center text-[9px] font-semibold text-violet-700">Img 3</div>
+                        <div className="rounded-lg bg-purple-200/80 flex items-center justify-center text-[9px] font-semibold text-purple-700">Img 4</div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Footer caption: Product Name + Description with View outlined button */}
+                  <div className="px-1 pt-0.5 pb-1">
+                    <div className="text-[11px] font-bold text-slate-900 leading-tight truncate">
+                      {cat.name === 'Furniture' ? 'Sofa' : cat.name === 'Electronics' ? 'Smart TV & Sound' : cat.name === 'Home Appliances' ? 'Smart Fridge' : `${cat.name}`}
+                    </div>
+                    <div className="flex items-center justify-between mt-1 gap-2">
+                      <span className="text-[10px] text-slate-500 truncate flex-1 font-medium">
+                        {cat.name === 'Furniture' ? '3 in 1 Luxury chair & sofa set' : `${cat.sub}`}
+                      </span>
+                      <button className="text-[10px] font-semibold text-blue-600 border border-blue-500/50 hover:border-blue-600 hover:bg-blue-50 px-3 py-1 rounded-md transition flex-shrink-0">
+                        View
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <div className="text-[12px] font-bold text-slate-800 leading-tight">{cat.name}</div>
-                <div className="text-[10px] text-slate-400 mt-0.5">{cat.sub}</div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Right Edge Overlay */}
@@ -296,29 +456,39 @@ export function HomeView({ setCurrentTab, setSelectedProduct }: HomeViewProps) {
       {/* ══════════════════════════════════════════════
           CTA BANNER — light blue
       ══════════════════════════════════════════════ */}
-      <section className="bg-white py-6 px-4 pb-14">
+      <section className="bg-white py-4 px-4 pt-3 sm:pt-8 pb-10">
         <div className="max-w-7xl mx-auto">
-          <div className="rounded-2xl bg-[#deeeff] p-8 sm:p-10 flex flex-col sm:flex-row items-center justify-between gap-6 relative overflow-hidden">
-            <div className="z-10 max-w-lg">
-              <h3 className="text-xl sm:text-2xl font-black text-blue-900 mb-2">Need something specific?</h3>
+          <div className="rounded-2xl bg-[#deeeff] pt-5 pb-0 px-6 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 sm:gap-6 relative overflow-hidden sm:overflow-visible">
+            {/* 3D Logo image on the left popping out at the top, bottom aligned with card bottom - Hidden on mobile */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img 
+              src="/do-you-need-3d-logo.png" 
+              alt="IceLink 3D Logo" 
+              className="hidden sm:block absolute bottom-0 -left-4 sm:-left-6 w-56 sm:w-72 h-auto object-contain pointer-events-none z-20" 
+            />
+
+            <div className="z-10 w-full sm:max-w-lg sm:ml-64 sm:mr-auto text-left mt-3 sm:mt-0">
+              <h3 className="text-xl sm:text-2xl font-black text-blue-900 mb-1">Need something specific?</h3>
               <p className="text-blue-900/70 text-sm leading-relaxed">
                 Tell us what you need and we will source it for you from our trusted suppliers worldwide.
               </p>
             </div>
-            <button
-              onClick={() => setCurrentTab('sourcing')}
-              className="z-10 flex-shrink-0 px-8 py-3.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm transition shadow-md"
-            >
-              Request Sourcing
-            </button>
 
-            {/* Decorative clipped image */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img 
-              src="https://static.vecteezy.com/system/resources/thumbnails/039/400/812/small/graduation-3d-icon-png.png" 
-              alt="Graduation Cap" 
-              className="absolute -bottom-16 -right-10 w-64 h-64 object-contain opacity-40 pointer-events-none" 
-            />
+            <div className="z-10 flex items-center justify-between sm:justify-center gap-4 sm:gap-6 flex-shrink-0 w-full sm:w-auto">
+              <button
+                onClick={() => setCurrentTab('sourcing')}
+                className="px-6 sm:px-8 py-3.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm transition shadow-md whitespace-nowrap"
+              >
+                Request Sourcing
+              </button>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img 
+                src="/req-image.png" 
+                alt="Request Sourcing Thumbnail" 
+                className="w-32 h-28 sm:w-44 sm:h-44 object-contain cursor-pointer animate-subtle-shake my-0 sm:-my-10 flex-shrink-0 ml-auto sm:ml-0"
+                onClick={() => setCurrentTab('sourcing')}
+              />
+            </div>
           </div>
         </div>
       </section>
