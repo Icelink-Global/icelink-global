@@ -16,13 +16,14 @@ import { Product } from '@/types';
 export default function Home() {
   const [currentTab, setCurrentTab] = useState<string>('home');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [currency, setCurrency] = useState<string>('GHS');
 
   const renderContent = () => {
     switch (currentTab) {
       case 'home':
         return <HomeView setCurrentTab={setCurrentTab} setSelectedProduct={setSelectedProduct} />;
       case 'autohaus':
-        return <AutoHausView setSelectedProduct={setSelectedProduct} setCurrentTab={setCurrentTab} />;
+        return <AutoHausView setSelectedProduct={setSelectedProduct} setCurrentTab={setCurrentTab} currency={currency} setCurrency={setCurrency} />;
       case 'electronics-gaming':
         return <ElectronicsGamingView setSelectedProduct={setSelectedProduct} setCurrentTab={setCurrentTab} />;
       case 'market':
@@ -48,7 +49,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-black text-white">
-      <NavigationHeader currentTab={currentTab} setCurrentTab={setCurrentTab} />
+      <NavigationHeader currentTab={currentTab} setCurrentTab={setCurrentTab} currency={currency} setCurrency={setCurrency} />
       <main className="flex-1 flex flex-col">{renderContent()}</main>
       <JopexFooter setCurrentTab={setCurrentTab} />
     </div>

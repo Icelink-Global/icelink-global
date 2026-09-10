@@ -6,11 +6,12 @@ import Link from 'next/link';
 interface HeaderProps {
   currentTab: string;
   setCurrentTab: (tab: string) => void;
+  currency: string;
+  setCurrency: (currency: string) => void;
 }
 
-export function NavigationHeader({ currentTab, setCurrentTab }: HeaderProps) {
+export function NavigationHeader({ currentTab, setCurrentTab, currency, setCurrency }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [currency, setCurrency] = useState('GHS');
   const [currencyDropdownOpen, setCurrencyDropdownOpen] = useState(false);
 
   const currencies = [

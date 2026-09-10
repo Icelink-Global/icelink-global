@@ -11,13 +11,66 @@ import {
 interface AutoHausViewProps {
   setSelectedProduct: (p: Product) => void;
   setCurrentTab: (tab: string) => void;
+  currency: string;
+  setCurrency: (currency: string) => void;
 }
 
-export function AutoHausView({ setSelectedProduct, setCurrentTab }: AutoHausViewProps) {
+export function AutoHausView({ setSelectedProduct, setCurrentTab, currency, setCurrency }: AutoHausViewProps) {
   const [filterType, setFilterType] = useState<string>('all');
   const [selectedCountry, setSelectedCountry] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [showSourceModal, setShowSourceModal] = useState<boolean>(false);
+  const [minPrice, setMinPrice] = useState<string>('');
+  const [maxPrice, setMaxPrice] = useState<string>('');
+  const [minPriceUsd, setMinPriceUsd] = useState<number>(0);
+  const [maxPriceUsd, setMaxPriceUsd] = useState<number>(0);
+
+  // Currency conversion rates (relative to USD)
+  const exchangeRates: Record<string, number> = {
+    USD: 1,
+    GHS: 14.5,
+    NGN: 1550,
+    GBP: 0.79,
+    KRW: 1320,
+    EUR: 0.92,
+    CNY: 7.2,
+    JPY: 149
+  };
+
+  // Convert price from USD to selected currency
+  const convertPrice = (priceUsd: number): number => {
+    if (currency === 'USD') return priceUsd;
+    return priceUsd * exchangeRates[currency] || priceUsd;
+  };
+
+  // Format price in thousands (K) format
+  const formatPrice = (price: number): string => {
+    if (price >= 1000) {
+      return `${(price / 1000).toFixed(0)}k`;
+    }
+    return price.toFixed(0);
+  };
+
+  // Parse K format to actual number
+  const parsePrice = (priceStr: string): number => {
+    if (!priceStr) return 0;
+    // Remove currency prefix if present
+    const cleanStr = priceStr.replace(/^[A-Z]{3}\s+/, '').toLowerCase().replace('k', '');
+    const num = parseFloat(cleanStr);
+    return isNaN(num) ? 0 : num * 1000;
+  };
+
+  // Convert price range when currency changes
+  useEffect(() => {
+    if (minPriceUsd > 0) {
+      const convertedValue = minPriceUsd * exchangeRates[currency];
+      setMinPrice(`${currency} ${formatPrice(convertedValue)}`);
+    }
+    if (maxPriceUsd > 0) {
+      const convertedValue = maxPriceUsd * exchangeRates[currency];
+      setMaxPrice(`${currency} ${formatPrice(convertedValue)}`);
+    }
+  }, [currency]);
 
   const bgImages = [
     "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?q=80&w=1200",
@@ -131,7 +184,7 @@ export function AutoHausView({ setSelectedProduct, setCurrentTab }: AutoHausView
               if (isActive) {
                 styleClass = 'opacity-100 translate-x-0 z-10'; // Active in center
               } else if (isPrev) {
-                styleClass = 'opacity-0 -translate-x-[10vw] z-0'; // Fading out to the left
+                styleClass = 'opacity-0 translate-x-0 z-0'; // Fading out in place
               }
 
               return (
@@ -139,7 +192,7 @@ export function AutoHausView({ setSelectedProduct, setCurrentTab }: AutoHausView
                   key={imgSrc}
                   src={imgSrc}
                   alt={`Featured Hero Vehicle ${idx + 1}`}
-                  className={`absolute w-full h-full object-contain object-left scale-[0.95] transform origin-left drop-shadow-[0_20px_45px_rgba(59,130,246,0.35)] transition-all duration-[2500ms] ease-in-out ${styleClass}`}
+                  className={`absolute w-full h-full object-contain object-left scale-[0.95] transform origin-left drop-shadow-[0_20px_45px_rgba(59,130,246,0.35)] transition-all duration-[1200ms] ease-out ${styleClass}`}
                 />
               );
             })}
@@ -279,81 +332,279 @@ export function AutoHausView({ setSelectedProduct, setCurrentTab }: AutoHausView
       ══════════════════════════════════════════════ */}
       <div className="bg-white text-slate-900 border-b border-gray-200">
         
-        {/* SHOP BY CATEGORY */}
-        <section className="py-14 px-4 max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
+        {/* ALL VEHICLES CATALOG LISTINGS */}
+        <section id="vehicle-listings" className="py-14 px-4 max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
             <div>
-              <h2 className="text-2xl sm:text-3xl font-black text-[#00051a]">Shop by Category</h2>
-              <p className="text-xs text-blue-950/70 font-medium mt-1">Select a vehicle category to filter inventory</p>
+              <h2 className="text-2xl sm:text-3xl font-black text-[#00051a]">All Vehicles</h2>
+              <p className="text-xs text-blue-950/70 font-medium mt-1">Find your perfect vehicle from our global inventory</p>
             </div>
-            <button
-              onClick={() => setFilterType('all')}
-              className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-blue-600/20"
-            >
-              <span>View all categories</span> <ArrowRight size={14} />
-            </button>
+
+            {/* Search bar */}
+            <div className="relative w-full md:w-72">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search make, model, stock ID..."
+                className="w-full bg-gray-100 border border-blue-900 rounded-lg px-3.5 py-2 pl-9 pr-8 text-xs text-gray-900 placeholder-gray-500 outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
+              />
+              <Search size={14} className="absolute left-3 top-2.5 text-gray-500" />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            {[
-              {
-                id: 'all',
-                name: 'All Vehicles',
-                sub: 'Explore all vehicles',
-                icon: 'https://images.vexels.com/media/users/3/155413/isolated/preview/02fa4279f1759a65b62bafe7caf5be32-suv-car-front-view-silhouette.png'
-              },
-              {
-                id: 'sedan',
-                name: 'Sedan',
-                sub: 'Comfort & Style',
-                icon: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?q=80&w=300'
-              },
-              {
-                id: 'cat_suv',
-                name: 'SUV',
-                sub: 'Power & Versatility',
-                icon: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=300'
-              },
-              {
-                id: 'cat_ev',
-                name: 'EV / Hybrid',
-                sub: 'Smart & Efficient',
-                icon: 'https://images.unsplash.com/photo-1563720223185-11003d516935?q=80&w=300'
-              },
-              {
-                id: 'truck',
-                name: 'Truck / Bus',
-                sub: 'Commercial Vehicles',
-                icon: 'https://images.unsplash.com/photo-1559416523-140dd55d222c?q=80&w=300'
-              },
-              {
-                id: 'luxury',
-                name: 'Luxury',
-                sub: 'Premium Selection',
-                icon: 'https://images.unsplash.com/photo-1594502184342-2e12f877aa73?q=80&w=300'
-              }
-            ].map((cat) => (
-              <div
-                key={cat.id}
-                onClick={() => {
-                  setFilterType(cat.id);
-                  const element = document.getElementById('vehicle-listings');
-                  element?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className={`cursor-pointer rounded-xl p-4 border transition-all duration-300 flex flex-col items-center text-center ${
-                  filterType === cat.id
-                    ? 'bg-blue-600/20 border-blue-500 shadow-lg shadow-blue-900/30'
-                    : 'bg-[#0a0f24] border-white/10 hover:border-blue-500/50 hover:bg-[#0e1638]'
-                }`}
-              >
-                <div className="w-16 h-12 rounded-lg overflow-hidden mb-3 bg-neutral-900 flex items-center justify-center">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={cat.icon} alt={cat.name} className="w-full h-full object-cover" />
-                </div>
-                <h3 className="font-extrabold text-sm text-white mb-0.5">{cat.name}</h3>
-                <p className="text-[10px] text-gray-400">{cat.sub}</p>
+          {/* Toolbar & Filters */}
+          <div className="bg-[#00051a] border border-white/10 rounded-xl p-6 mb-8">
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
+              <div>
+                <label className="text-[10px] font-bold text-gray-400 block mb-2 uppercase">Country of Origin</label>
+                <select
+                  value={selectedCountry}
+                  onChange={(e) => setSelectedCountry(e.target.value)}
+                  className="w-full bg-[#00051a] border border-white/10 rounded-lg px-3 py-2.5 text-xs text-white outline-none focus:border-blue-500"
+                >
+                  <option value="all">All Countries</option>
+                  <option value="korea">South Korea</option>
+                  <option value="china">China</option>
+                  <option value="usa">USA</option>
+                  <option value="dubai">Dubai (UAE)</option>
+                  <option value="japan">Japan</option>
+                </select>
               </div>
-            ))}
+
+              <div>
+                <label className="text-[10px] font-bold text-gray-400 block mb-2 uppercase">Category</label>
+                <select
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value)}
+                  className="w-full bg-[#00051a] border border-white/10 rounded-lg px-3 py-2.5 text-xs text-white outline-none focus:border-blue-500"
+                >
+                  <option value="all">All Categories</option>
+                  <option value="sedan">Sedan</option>
+                  <option value="cat_suv">SUV</option>
+                  <option value="cat_ev">EV / Hybrid</option>
+                  <option value="truck">Truck / Bus</option>
+                  <option value="luxury">Luxury</option>
+                </select>
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className="text-[10px] font-bold text-gray-400 block mb-2 uppercase">Fuel Type</label>
+                <select className="w-full bg-[#00051a] border border-white/10 rounded-lg px-3 py-2.5 text-xs text-white outline-none focus:border-blue-500">
+                  <option value="all">All Types</option>
+                  <option value="gasoline">Gasoline</option>
+                  <option value="diesel">Diesel</option>
+                  <option value="electric">Electric</option>
+                  <option value="hybrid">Hybrid</option>
+                </select>
+              </div>
+
+              <div className="sm:col-span-2 lg:col-span-2">
+                <label className="text-[10px] font-bold text-gray-400 block mb-2 uppercase">Price Range ({currency})</label>
+                <div className="flex items-center gap-1">
+                  <div className="relative flex-1">
+                    <input
+                      list="price-min-options"
+                      value={minPrice}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setMinPrice(value);
+                        if (value) {
+                          const parsedValue = parsePrice(value);
+                          // Convert current currency value to USD for storage
+                          setMinPriceUsd(parsedValue / exchangeRates[currency]);
+                        } else {
+                          setMinPriceUsd(0);
+                        }
+                      }}
+                      onBlur={(e) => {
+                        if (e.target.value && !e.target.value.includes(currency)) {
+                          setMinPrice(`${currency} ${e.target.value}`);
+                        }
+                      }}
+                      onFocus={(e) => {
+                        // Remove currency prefix when focusing for editing
+                        if (e.target.value.includes(currency)) {
+                          const cleanValue = e.target.value.replace(`${currency} `, '').trim();
+                          setMinPrice(cleanValue);
+                        }
+                      }}
+                      placeholder="Min"
+                      className="w-full bg-[#00051a] border border-white/10 rounded-lg px-3 py-2.5 text-xs text-white outline-none focus:border-blue-500 placeholder-gray-500"
+                    />
+                    <datalist id="price-min-options">
+                      <option value="50k" />
+                      <option value="100k" />
+                      <option value="150k" />
+                      <option value="200k" />
+                      <option value="300k" />
+                      <option value="500k" />
+                    </datalist>
+                  </div>
+                  <span className="text-gray-500 text-xs">-</span>
+                  <div className="relative flex-1">
+                    <input
+                      list="price-max-options"
+                      value={maxPrice}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setMaxPrice(value);
+                        if (value) {
+                          const parsedValue = parsePrice(value);
+                          // Convert current currency value to USD for storage
+                          setMaxPriceUsd(parsedValue / exchangeRates[currency]);
+                        } else {
+                          setMaxPriceUsd(0);
+                        }
+                      }}
+                      onBlur={(e) => {
+                        if (e.target.value && !e.target.value.includes(currency)) {
+                          setMaxPrice(`${currency} ${e.target.value}`);
+                        }
+                      }}
+                      onFocus={(e) => {
+                        // Remove currency prefix when focusing for editing
+                        if (e.target.value.includes(currency)) {
+                          const cleanValue = e.target.value.replace(`${currency} `, '').trim();
+                          setMaxPrice(cleanValue);
+                        }
+                      }}
+                      placeholder="Max"
+                      className="w-full bg-[#00051a] border border-white/10 rounded-lg px-3 py-2.5 text-xs text-white outline-none focus:border-blue-500 placeholder-gray-500"
+                    />
+                    <datalist id="price-max-options">
+                      <option value="50k" />
+                      <option value="100k" />
+                      <option value="150k" />
+                      <option value="200k" />
+                      <option value="300k" />
+                      <option value="500k" />
+                    </datalist>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-end">
+                <button
+                  onClick={() => {
+                    setSelectedCountry('all');
+                    setFilterType('all');
+                    setSearchQuery('');
+                    setMinPrice('');
+                    setMaxPrice('');
+                    setMinPriceUsd(0);
+                    setMaxPriceUsd(0);
+                  }}
+                  className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 font-bold text-xs transition"
+                >
+                  Clear All
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Vehicles Grid */}
+        <section className="pb-16 px-4 max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {filteredVehicles.map((p) => {
+              const convertedPrice = p.price ? convertPrice(p.price) : convertPrice(10345);
+              return (
+                <div
+                  key={p.id}
+                  className="rounded-xl bg-[#00051a] border border-white/10 overflow-hidden flex flex-col hover:border-blue-500/50 transition-all duration-300 group shadow-md"
+                >
+                  <div className="relative aspect-[16/9] w-full bg-neutral-900 overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={p.images[0]}
+                      alt={p.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                    />
+                    {/* Country badge */}
+                    <span className="absolute top-3 left-3 px-2.5 py-1 rounded bg-blue-600/90 backdrop-blur-sm border border-blue-400/30 text-[9px] text-white font-extrabold uppercase tracking-wider shadow">
+                      {p.source_market}
+                    </span>
+                    <span className="absolute bottom-3 right-3 px-2 py-0.5 rounded bg-black/70 backdrop-blur-sm text-gray-300 text-[10px] font-mono">
+                      {p.stock_id}
+                    </span>
+                  </div>
+
+                  <div className="p-4 flex-1 flex flex-col justify-center">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="px-2 py-0.5 rounded bg-green-500/10 text-green-400 text-[10px] font-bold uppercase">
+                        In Stock
+                      </span>
+                      <button
+                        onClick={() => {
+                          setSelectedCountry('all');
+                          setFilterType('all');
+                          setSearchQuery('');
+                          setMinPrice('');
+                          setMaxPrice('');
+                          setMinPriceUsd(0);
+                          setMaxPriceUsd(0);
+                        }}
+                        className="text-gray-400 hover:text-gray-200 transition"
+                        title="Clear filters"
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
+
+                    <h3 className="text-base font-bold text-white mb-2 leading-tight group-hover:text-blue-400 transition">
+                      {p.name}
+                    </h3>
+
+                    {/* Specification list */}
+                    <div className="text-xs text-gray-400 space-y-1 mb-3">
+                      <div>
+                        {p.specifications['Fuel'] || 'Gasoline'} | {p.specifications['Transmission'] || 'Automatic'}
+                      </div>
+                      <div className="font-mono text-[11px] text-gray-300">
+                        {p.specifications['Mileage'] || 'N/A'}
+                      </div>
+                    </div>
+
+                    <div className="pt-3 border-t border-white/5 mb-3">
+                      <div className="text-[10px] text-gray-400 font-bold uppercase">Price</div>
+                      <div className="text-base font-black text-blue-400">
+                        {currency} {formatPrice(convertedPrice)}
+                      </div>
+                      <div className="text-[11px] text-gray-400">
+                        ${p.price?.toLocaleString()} USD
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => {
+                          setSelectedProduct(p);
+                          setCurrentTab('product-details');
+                        }}
+                        className="w-full py-2 rounded bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider transition"
+                      >
+                        View Details
+                      </button>
+                      <button
+                        onClick={() => handleWhatsAppEnquiry(p.name, p.stock_id)}
+                        className="w-full py-2 rounded bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white font-bold text-xs uppercase tracking-wider transition border border-emerald-500/30 flex items-center justify-center gap-1"
+                      >
+                        <MessageSquare size={12} /> WhatsApp
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </section>
 
@@ -382,205 +633,6 @@ export function AutoHausView({ setSelectedProduct, setCurrentTab }: AutoHausView
             </div>
           </div>
         </section>
-
-        {/* ALL VEHICLES CATALOG LISTINGS */}
-        <section id="vehicle-listings" className="pb-16 px-4 max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-black text-[#00051a]">All Vehicles</h2>
-              <p className="text-xs text-blue-950/70 font-medium mt-1">Find your perfect vehicle from our global inventory</p>
-            </div>
-
-            {/* Search bar */}
-            <div className="relative w-full md:w-72">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search make, model, stock ID..."
-                className="w-full bg-[#0a0f24] border border-white/15 rounded-lg px-3.5 py-2 pl-9 text-xs text-white placeholder-gray-400 outline-none focus:border-blue-500"
-              />
-              <Search size={14} className="absolute left-3 top-2.5 text-gray-400" />
-            </div>
-          </div>
-
-          {/* Toolbar & Filters */}
-          <div className="bg-[#0a0f24] border border-white/10 rounded-xl p-4 mb-8">
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
-              <div>
-                <label className="text-[10px] font-bold text-gray-400 block mb-1 uppercase">Country of Origin</label>
-                <select
-                  value={selectedCountry}
-                  onChange={(e) => setSelectedCountry(e.target.value)}
-                  className="w-full bg-[#050811] border border-white/10 rounded px-2.5 py-1.5 text-xs text-white outline-none focus:border-blue-500"
-                >
-                  <option value="all">All Countries</option>
-                  <option value="korea">South Korea</option>
-                  <option value="china">China</option>
-                  <option value="usa">USA</option>
-                  <option value="dubai">Dubai (UAE)</option>
-                  <option value="japan">Japan</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="text-[10px] font-bold text-gray-400 block mb-1 uppercase">Category</label>
-                <select
-                  value={filterType}
-                  onChange={(e) => setFilterType(e.target.value)}
-                  className="w-full bg-[#050811] border border-white/10 rounded px-2.5 py-1.5 text-xs text-white outline-none focus:border-blue-500"
-                >
-                  <option value="all">All Categories</option>
-                  <option value="sedan">Sedan</option>
-                  <option value="cat_suv">SUV</option>
-                  <option value="cat_ev">EV / Hybrid</option>
-                  <option value="truck">Truck / Bus</option>
-                  <option value="luxury">Luxury</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="text-[10px] font-bold text-gray-400 block mb-1 uppercase">Fuel Type</label>
-                <select className="w-full bg-[#050811] border border-white/10 rounded px-2.5 py-1.5 text-xs text-white outline-none focus:border-blue-500">
-                  <option value="all">All Types</option>
-                  <option value="gasoline">Gasoline</option>
-                  <option value="diesel">Diesel</option>
-                  <option value="electric">Electric</option>
-                  <option value="hybrid">Hybrid</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="text-[10px] font-bold text-gray-400 block mb-1 uppercase">Price Range</label>
-                <div className="flex items-center gap-1">
-                  <input type="text" placeholder="Min" className="w-full bg-[#050811] border border-white/10 rounded px-2 py-1.5 text-xs text-white outline-none" />
-                  <span className="text-gray-500 text-xs">-</span>
-                  <input type="text" placeholder="Max" className="w-full bg-[#050811] border border-white/10 rounded px-2 py-1.5 text-xs text-white outline-none" />
-                </div>
-              </div>
-
-              <div className="col-span-2 flex items-end gap-2">
-                <button
-                  onClick={() => {
-                    setSelectedCountry('all');
-                    setFilterType('all');
-                    setSearchQuery('');
-                  }}
-                  className="flex-1 py-1.5 rounded bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 font-bold text-xs transition"
-                >
-                  Clear All
-                </button>
-              </div>
-            </div>
-
-            {/* Category Filter Pills */}
-            <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-white/5">
-              {[
-                { label: `All (${vehicles.length})`, id: 'all' },
-                { label: 'Sedan', id: 'sedan' },
-                { label: 'SUV', id: 'cat_suv' },
-                { label: 'EV / Hybrid', id: 'cat_ev' },
-                { label: 'Truck / Bus', id: 'truck' },
-                { label: 'Luxury', id: 'luxury' }
-              ].map((btn) => (
-                <button
-                  key={btn.id}
-                  onClick={() => setFilterType(btn.id)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition ${
-                    filterType === btn.id
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
-                  }`}
-                >
-                  {btn.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-        {/* Vehicles Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filteredVehicles.map((p) => {
-            const priceGhs = p.price ? p.price * 14.5 : 150000;
-            return (
-              <div
-                key={p.id}
-                className="rounded-xl bg-[#0a0f24] border border-white/10 overflow-hidden flex flex-col justify-between hover:border-blue-500/50 transition-all duration-300 group shadow-md"
-              >
-                <div className="relative aspect-[16/10] w-full bg-neutral-900 overflow-hidden">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={p.images[0]}
-                    alt={p.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                  />
-                  {/* Country badge */}
-                  <span className="absolute top-3 left-3 px-2.5 py-1 rounded bg-blue-600/90 backdrop-blur-sm border border-blue-400/30 text-[9px] text-white font-extrabold uppercase tracking-wider shadow">
-                    {p.source_market}
-                  </span>
-                  <span className="absolute bottom-3 right-3 px-2 py-0.5 rounded bg-black/70 backdrop-blur-sm text-gray-300 text-[10px] font-mono">
-                    {p.stock_id}
-                  </span>
-                </div>
-
-                <div className="p-5 flex-1 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="px-2 py-0.5 rounded bg-green-500/10 text-green-400 text-[10px] font-bold uppercase">
-                        In Stock
-                      </span>
-                    </div>
-
-                    <h3 className="text-lg font-bold text-white mb-2 leading-tight group-hover:text-blue-400 transition">
-                      {p.name}
-                    </h3>
-
-                    {/* Specification list */}
-                    <div className="text-xs text-gray-400 space-y-1 mb-4">
-                      <div>
-                        {p.specifications['Fuel'] || 'Gasoline'} | {p.specifications['Transmission'] || 'Automatic'}
-                      </div>
-                      <div className="font-mono text-[11px] text-gray-300">
-                        {p.specifications['Mileage'] || 'N/A'}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="pt-4 border-t border-white/5 mb-4">
-                      <div className="text-[10px] text-gray-400 font-bold uppercase">Price</div>
-                      <div className="text-lg font-black text-blue-400">
-                        GHS {priceGhs.toLocaleString()}
-                      </div>
-                      <div className="text-[11px] text-gray-400">
-                        ${p.price?.toLocaleString()} USD
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2">
-                      <button
-                        onClick={() => {
-                          setSelectedProduct(p);
-                          setCurrentTab('product-details');
-                        }}
-                        className="w-full py-2 rounded bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider transition"
-                      >
-                        View Details
-                      </button>
-                      <button
-                        onClick={() => handleWhatsAppEnquiry(p.name, p.stock_id)}
-                        className="w-full py-2 rounded bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white font-bold text-xs uppercase tracking-wider transition border border-emerald-500/30 flex items-center justify-center gap-1"
-                      >
-                        <MessageSquare size={12} /> WhatsApp
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </section>
       </div>
 
       {/* ══════════════════════════════════════════════
