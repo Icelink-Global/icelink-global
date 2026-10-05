@@ -93,7 +93,7 @@ export function SourcingView() {
     const text = encodeURIComponent(
       `Hello IceLink Sourcing Team! I need help sourcing:\n- Product: ${formData.productName || 'General Product'}\n- Category: ${formData.category}\n- Preferred Market: ${formData.preferredSource}\n- Quantity: ${formData.quantity}\n- Budget: $${formData.budget} USD\n- Destination: ${formData.destinationCountry}`
     );
-    window.open(`https://wa.me/233241234567?text=${text}`, '_blank');
+    window.open(`https://wa.me/821044879685?text=${text}`, '_blank');
   };
 
   const processSteps = [

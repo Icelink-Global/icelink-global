@@ -5,7 +5,8 @@ import { Product } from '@/types';
 import {
   Car, Fuel, Settings, Milestone, ShieldCheck, Ship, FileCheck, Headphones,
   Search, ArrowRight, CheckCircle2, SlidersHorizontal, MessageSquare, Wrench,
-  DollarSign, PackageCheck, Sparkles, Filter, X
+  DollarSign, PackageCheck, Sparkles, Filter, X,
+  Camera, Zap, Gauge, ClipboardList
 } from 'lucide-react';
 
 interface AutoHausViewProps {
@@ -133,7 +134,7 @@ export function AutoHausView({ setSelectedProduct, setCurrentTab, currency, setC
     const text = encodeURIComponent(
       `Hello IceLink Global, I am interested in inquiring about the vehicle: ${vehicleName} (Stock ID: ${stockId || 'N/A'}). Please provide further details and total shipping cost.`
     );
-    window.open(`https://wa.me/233241234567?text=${text}`, '_blank');
+    window.open(`https://wa.me/821044879685?text=${text}`, '_blank');
   };
 
   const handleSourcingSubmit = (e: React.FormEvent) => {
@@ -520,85 +521,86 @@ export function AutoHausView({ setSelectedProduct, setCurrentTab, currency, setC
               return (
                 <div
                   key={p.id}
-                  className="rounded-xl bg-[#00051a] border border-white/10 overflow-hidden flex flex-col hover:border-blue-500/50 transition-all duration-300 group shadow-md"
+                  className="rounded-xl bg-white border border-gray-200 overflow-hidden flex flex-col hover:border-blue-400 hover:shadow-lg transition-all duration-300 group"
                 >
-                  <div className="relative aspect-[16/9] w-full bg-neutral-900 overflow-hidden">
+                  <div className="relative aspect-[4/3] w-full bg-neutral-100 overflow-hidden">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={p.images[0]}
                       alt={p.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                     />
-                    {/* Country badge */}
-                    <span className="absolute top-3 left-3 px-2.5 py-1 rounded bg-blue-600/90 backdrop-blur-sm border border-blue-400/30 text-[9px] text-white font-extrabold uppercase tracking-wider shadow">
+                    
+                    {/* Top Left - Country */}
+                    <div className="absolute top-3 left-3 px-2.5 py-1 rounded bg-black/60 backdrop-blur-sm text-[10px] text-white font-bold uppercase tracking-wide flex items-center gap-1.5">
+                      {p.source_market.toLowerCase().includes('korea') && '🇰🇷'}
+                      {p.source_market.toLowerCase().includes('china') && '🇨🇳'}
+                      {p.source_market.toLowerCase().includes('usa') && '🇺🇸'}
+                      {(p.source_market.toLowerCase().includes('dubai') || p.source_market.toLowerCase().includes('uae')) && '🇦🇪'}
+                      {p.source_market.toLowerCase().includes('japan') && '🇯🇵'}
                       {p.source_market}
-                    </span>
-                    <span className="absolute bottom-3 right-3 px-2 py-0.5 rounded bg-black/70 backdrop-blur-sm text-gray-300 text-[10px] font-mono">
+                    </div>
+
+                    {/* Top Right - Status */}
+                    <div className="absolute top-3 right-3 px-2.5 py-1 rounded bg-[#20b26c] text-[10px] text-white font-bold tracking-wide">
+                      In Stock
+                    </div>
+
+                    {/* Bottom Right - Stock ID */}
+                    <div className="absolute bottom-3 right-3 px-2 py-1.5 rounded bg-black/60 backdrop-blur-sm text-gray-200 text-[9px] font-mono tracking-wider">
                       {p.stock_id}
-                    </span>
+                    </div>
                   </div>
 
-                  <div className="p-4 flex-1 flex flex-col justify-center">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="px-2 py-0.5 rounded bg-green-500/10 text-green-400 text-[10px] font-bold uppercase">
-                        In Stock
-                      </span>
-                      <button
-                        onClick={() => {
-                          setSelectedCountry('all');
-                          setFilterType('all');
-                          setSearchQuery('');
-                          setMinPrice('');
-                          setMaxPrice('');
-                          setMinPriceUsd(0);
-                          setMaxPriceUsd(0);
-                        }}
-                        className="text-gray-400 hover:text-gray-200 transition"
-                        title="Clear filters"
-                      >
-                        <X size={12} />
-                      </button>
-                    </div>
+                  <div className="p-5 flex-1 flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-900 mb-3 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
+                        {p.name}
+                      </h3>
 
-                    <h3 className="text-base font-bold text-white mb-2 leading-tight group-hover:text-blue-400 transition">
-                      {p.name}
-                    </h3>
-
-                    {/* Specification list */}
-                    <div className="text-xs text-gray-400 space-y-1 mb-3">
-                      <div>
-                        {p.specifications['Fuel'] || 'Gasoline'} | {p.specifications['Transmission'] || 'Automatic'}
+                      {/* Specs */}
+                      <div className="grid grid-cols-2 gap-y-2 gap-x-1 text-[11px] text-gray-600 mb-5 font-medium bg-gray-50 border border-gray-100 rounded-lg p-3">
+                        <div className="flex items-center gap-1.5">
+                          <Fuel size={14} className="text-gray-400" />
+                          <span className="truncate">{p.specifications['Fuel'] || 'Gasoline'}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <Settings size={14} className="text-gray-400" />
+                          <span className="truncate">{p.specifications['Transmission'] || 'Auto'}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 col-span-2">
+                          <Milestone size={14} className="text-gray-400" />
+                          <span className="truncate">{p.specifications['Mileage'] || 'N/A'}</span>
+                        </div>
                       </div>
-                      <div className="font-mono text-[11px] text-gray-300">
-                        {p.specifications['Mileage'] || 'N/A'}
+
+                      {/* Price */}
+                      <div className="mb-5">
+                        <div className="text-[11px] text-gray-500 font-medium mb-0.5">Price</div>
+                        <div className="text-xl font-bold text-blue-600 mb-0.5">
+                          {currency} {formatPrice(convertedPrice)}
+                        </div>
+                        <div className="text-[11px] text-gray-400">
+                          {convertedPrice.toLocaleString(undefined, { maximumFractionDigits: 0 })} {currency}
+                        </div>
                       </div>
                     </div>
 
-                    <div className="pt-3 border-t border-white/5 mb-3">
-                      <div className="text-[10px] text-gray-400 font-bold uppercase">Price</div>
-                      <div className="text-base font-black text-blue-400">
-                        {currency} {formatPrice(convertedPrice)}
-                      </div>
-                      <div className="text-[11px] text-gray-400">
-                        ${p.price?.toLocaleString()} USD
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 gap-3 mt-auto">
                       <button
                         onClick={() => {
                           setSelectedProduct(p);
                           setCurrentTab('product-details');
                         }}
-                        className="w-full py-2 rounded bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider transition"
+                        className="w-full py-2.5 rounded-lg bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 font-bold text-xs transition-colors"
                       >
                         View Details
                       </button>
                       <button
                         onClick={() => handleWhatsAppEnquiry(p.name, p.stock_id)}
-                        className="w-full py-2 rounded bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white font-bold text-xs uppercase tracking-wider transition border border-emerald-500/30 flex items-center justify-center gap-1"
+                        className="w-full py-2.5 rounded-lg bg-[#0a1e3f] hover:bg-blue-900 text-white font-bold text-xs transition-colors flex items-center justify-center gap-1.5 shadow-sm"
                       >
-                        <MessageSquare size={12} /> WhatsApp
+                        <MessageSquare size={14} /> WhatsApp
                       </button>
                     </div>
                   </div>
@@ -694,6 +696,141 @@ export function AutoHausView({ setSelectedProduct, setCurrentTab, currency, setC
                 <p className="text-xs text-gray-400 leading-relaxed">{item.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════
+          VEHICLE INSPECTION SECTION
+      ══════════════════════════════════════════════ */}
+      <section className="pt-20 pb-10 px-4 bg-white border-t border-gray-200 relative overflow-hidden">
+        {/* Background Accent */}
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-50 rounded-full blur-[120px] pointer-events-none -translate-y-1/2 translate-x-1/3"></div>
+
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-3xl sm:text-4xl font-black text-[#00051a] mb-4">Inspect Before You Invest.</h2>
+            <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
+              Every vehicle deserves a proper check before it reaches your hands. Our vehicle inspection service helps buyers understand the condition of a vehicle before purchase, with detailed checks covering its mechanical, exterior, interior and electrical components.
+            </p>
+          </div>
+
+          {/* Inspection Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div className="bg-white border border-gray-200 shadow-sm rounded-2xl p-8 hover:border-blue-500/40 hover:shadow-md transition-all group">
+              <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                <Camera size={24} />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-3">1. Exterior & Body</h3>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Check the vehicle's exterior condition, including visible dents, scratches, rust, repainting and signs of previous damage.
+              </p>
+            </div>
+
+            <div className="bg-white border border-gray-200 shadow-sm rounded-2xl p-8 hover:border-blue-500/40 hover:shadow-md transition-all group">
+              <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                <Wrench size={24} />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-3">2. Engine & Transmission</h3>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Check the engine and transmission for visible mechanical concerns, leaks, unusual sounds and other signs that may require attention.
+              </p>
+            </div>
+
+            <div className="bg-white border border-gray-200 shadow-sm rounded-2xl p-8 hover:border-blue-500/40 hover:shadow-md transition-all group">
+              <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                <Zap size={24} />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-3">3. Interior & Electrical</h3>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Check the interior, dashboard, lights, air conditioning, electronics, controls and other visible electrical functions.
+              </p>
+            </div>
+
+            <div className="bg-white border border-gray-200 shadow-sm rounded-2xl p-8 hover:border-blue-500/40 hover:shadow-md transition-all group">
+              <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                <Settings size={24} />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-3">4. Brakes, Tyres & Suspension</h3>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Check tyre condition, braking components and visible suspension issues to help identify areas that may need attention.
+              </p>
+            </div>
+
+            <div className="bg-white border border-gray-200 shadow-sm rounded-2xl p-8 hover:border-blue-500/40 hover:shadow-md transition-all group">
+              <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                <Milestone size={24} />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-3">5. Road Test</h3>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Where applicable, test the vehicle's steering, braking, acceleration and handling while checking for unusual sounds or driving concerns.
+              </p>
+            </div>
+
+            <div className="bg-white border border-gray-200 shadow-sm rounded-2xl p-8 hover:border-blue-500/40 hover:shadow-md transition-all group">
+              <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                <ClipboardList size={24} />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-3">6. Inspection Report</h3>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Receive documented inspection findings with relevant photos and observations, giving you a clearer understanding of the vehicle before making your decision.
+              </p>
+            </div>
+          </div>
+
+          {/* Process Indicator */}
+          <div className="mb-8">
+            <div className="flex flex-col md:flex-row justify-between relative">
+              {/* Line connector for desktop */}
+              <div className="hidden md:block absolute top-6 left-10 right-10 h-[2px] bg-gray-200 z-0"></div>
+              
+              {[
+                { step: '01', title: 'Request Inspection', desc: 'Submit the vehicle details and inspection request.' },
+                { step: '02', title: 'Vehicle Assessment', desc: 'Our team checks the vehicle based on the available inspection points.' },
+                { step: '03', title: 'Findings & Report', desc: 'Receive the inspection findings, observations and relevant photos.' },
+                { step: '04', title: 'Make Your Decision', desc: 'Use the inspection information to decide whether to proceed with the purchase.' }
+              ].map((item, idx) => (
+                <div key={idx} className="relative z-10 flex flex-col items-center text-center px-4 mb-8 md:mb-0 w-full md:w-1/4">
+                  <div className="w-12 h-12 rounded-full bg-white border-2 border-blue-500 flex items-center justify-center text-blue-600 font-black text-sm mb-4 shadow-[0_4px_10px_rgba(59,130,246,0.2)]">
+                    {item.step}
+                  </div>
+                  <h4 className="text-gray-900 font-bold text-sm mb-2">{item.title}</h4>
+                  <p className="text-xs text-gray-600 max-w-[200px]">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="pb-20 pt-10 px-4 bg-[#050811] relative overflow-hidden">
+        <div className="max-w-7xl mx-auto relative z-10">
+
+          {/* CTA / Visual Area */}
+          <div className="relative rounded-3xl overflow-hidden bg-[#03081a] border border-blue-500/20 p-8 sm:p-12">
+            <div className="absolute inset-0 z-0 opacity-40">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img 
+                src="https://images.unsplash.com/photo-1503375894314-d0e889b78e24?q=80&w=1200" 
+                alt="Professional vehicle inspection" 
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#03081a] via-[#03081a]/90 to-transparent"></div>
+            </div>
+            
+            <div className="relative z-10 max-w-xl">
+              <h3 className="text-2xl sm:text-3xl font-black text-white mb-4">Know Before You Buy</h3>
+              <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-8">
+                Don't rely on pictures alone. Get the vehicle checked before committing to your purchase. We source it → We inspect it → We ship it → We deliver it.
+              </p>
+              <button
+                onClick={() => handleWhatsAppEnquiry('Vehicle Inspection Request', 'N/A')}
+                className="px-8 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold transition shadow-lg shadow-blue-600/30 flex items-center gap-2"
+              >
+                <MessageSquare size={18} />
+                Request an Inspection
+              </button>
+            </div>
           </div>
         </div>
       </section>

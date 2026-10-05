@@ -66,7 +66,7 @@ export function ContactView() {
                     </div>
                     <div>
                       <h3 className="font-bold text-gray-900 mb-1 text-sm">Phone & WhatsApp</h3>
-                      <p className="text-sm text-gray-500 leading-relaxed">+233 50 123 4567<br/>+233 24 987 6543</p>
+                      <p className="text-sm text-gray-500 leading-relaxed">+82 10 4487 9685</p>
                     </div>
                   </div>
 
@@ -76,7 +76,7 @@ export function ContactView() {
                     </div>
                     <div>
                       <h3 className="font-bold text-gray-900 mb-1 text-sm">Email Address</h3>
-                      <p className="text-sm text-gray-500 leading-relaxed">info@icelinkglobal.com<br/>sales@icelinkglobal.com</p>
+                      <p className="text-sm text-gray-500 leading-relaxed">Icelinkglobal@gmail.com</p>
                     </div>
                   </div>
 

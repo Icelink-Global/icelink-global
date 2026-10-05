@@ -2,9 +2,10 @@ import React from 'react';
 
 interface FooterProps {
   setCurrentTab?: (tab: string) => void;
+  currentTab?: string;
 }
 
-export function JopexFooter({ setCurrentTab }: FooterProps) {
+export function JopexFooter({ setCurrentTab, currentTab }: FooterProps) {
   const handleNav = (tab: string, e: React.MouseEvent) => {
     if (setCurrentTab) {
       e.preventDefault();
@@ -40,18 +41,37 @@ export function JopexFooter({ setCurrentTab }: FooterProps) {
             Connecting international markets to deliver premium vehicles, components, general goods, and enterprise solutions across the African continent.
           </p>
           <div className="footer-social flex gap-4">
-            <a href="#" className="social-icon w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white hover:border-blue-500 transition-all duration-300 hover:-translate-y-0.5">
-              <span>f</span>
-            </a>
-            <a href="#" className="social-icon w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white hover:border-blue-500 transition-all duration-300 hover:-translate-y-0.5">
-              <span>t</span>
-            </a>
-            <a href="#" className="social-icon w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white hover:border-blue-500 transition-all duration-300 hover:-translate-y-0.5">
-              <span>in</span>
-            </a>
-            <a href="#" className="social-icon w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white hover:border-blue-500 transition-all duration-300 hover:-translate-y-0.5">
-              <span>ig</span>
-            </a>
+            {currentTab === 'autohaus' ? (
+              <>
+                <a href="https://www.facebook.com/share/1WabP2wP25/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="social-icon w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white hover:border-blue-500 transition-all duration-300 hover:-translate-y-0.5">
+                  <span>f</span>
+                </a>
+                <a href="https://www.instagram.com/ice_autohaus?stkn=M3U2aGNjaDh4NHF2&utm_source=qr" target="_blank" rel="noopener noreferrer" className="social-icon w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white hover:border-blue-500 transition-all duration-300 hover:-translate-y-0.5">
+                  <span>ig</span>
+                </a>
+                <a href="https://www.tiktok.com/@ice.auto.haus?_r=1&_t=ZS-9AIcby3bACy" target="_blank" rel="noopener noreferrer" className="social-icon w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white hover:border-blue-500 transition-all duration-300 hover:-translate-y-0.5">
+                  <span>tk</span>
+                </a>
+                <a href="https://youtube.com/@iceautohaus?si=VKAN-g_adJtK9NIY" target="_blank" rel="noopener noreferrer" className="social-icon w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white hover:border-blue-500 transition-all duration-300 hover:-translate-y-0.5">
+                  <span>yt</span>
+                </a>
+              </>
+            ) : (
+              <>
+                <a href="#" className="social-icon w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white hover:border-blue-500 transition-all duration-300 hover:-translate-y-0.5">
+                  <span>f</span>
+                </a>
+                <a href="#" className="social-icon w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white hover:border-blue-500 transition-all duration-300 hover:-translate-y-0.5">
+                  <span>t</span>
+                </a>
+                <a href="#" className="social-icon w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white hover:border-blue-500 transition-all duration-300 hover:-translate-y-0.5">
+                  <span>in</span>
+                </a>
+                <a href="#" className="social-icon w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white hover:border-blue-500 transition-all duration-300 hover:-translate-y-0.5">
+                  <span>ig</span>
+                </a>
+              </>
+            )}
           </div>
         </div>
 
