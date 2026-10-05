@@ -32,9 +32,9 @@ export function JopexFooter({ setCurrentTab, currentTab }: FooterProps) {
           <div className="footer-logo flex items-center gap-3 cursor-pointer" onClick={(e) => handleNav('home', e)}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/logo.png"
+              src="/icelink-logo.png"
               alt="IceLink Global Logo"
-              className="h-14 w-auto object-contain hover:scale-105 transition-transform duration-300 drop-shadow-[0_2px_12px_rgba(59,130,246,0.3)]"
+              className="h-20 w-auto object-contain hover:scale-105 transition-transform duration-300 drop-shadow-[0_2px_12px_rgba(59,130,246,0.3)]"
             />
           </div>
           <p className="footer-description text-sm leading-relaxed text-gray-400">

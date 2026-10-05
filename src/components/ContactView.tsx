@@ -66,7 +66,7 @@ export function ContactView() {
                     </div>
                     <div>
                       <h3 className="font-bold text-gray-900 mb-1 text-sm">Phone & WhatsApp</h3>
-                      <p className="text-sm text-gray-500 leading-relaxed">+82 10 4487 9685</p>
+                      <p className="text-sm text-gray-500 leading-relaxed">+82 10 4487 9685<br/>+233 54 968 5770</p>
                     </div>
                   </div>
 

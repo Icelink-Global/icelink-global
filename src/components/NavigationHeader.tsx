@@ -37,14 +37,14 @@ export function NavigationHeader({ currentTab, setCurrentTab, currency, setCurre
 
   return (
     <header className="sticky top-0 z-50 w-full bg-[#00051a] border-b border-white/10">
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between gap-4">
         {/* Logo */}
         <button onClick={() => setCurrentTab('home')} className="flex items-center gap-3 flex-shrink-0 group">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/logo.png"
+            src="/icelink-logo.png"
             alt="IceLink Global Logo"
-            className="h-10 w-auto object-contain drop-shadow-[0_2px_10px_rgba(59,130,246,0.3)] group-hover:scale-105 transition-transform duration-300"
+            className="h-14 md:h-16 w-auto object-contain drop-shadow-[0_2px_10px_rgba(59,130,246,0.3)] group-hover:scale-105 transition-transform duration-300"
           />
         </button>
 

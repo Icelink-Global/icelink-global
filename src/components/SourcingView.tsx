@@ -96,38 +96,7 @@ export function SourcingView() {
     window.open(`https://wa.me/821044879685?text=${text}`, '_blank');
   };
 
-  const processSteps = [
-    {
-      step: '01',
-      title: 'Submit Sourcing Parameters',
-      desc: 'Define your desired item, target budget, preferred country origin, and specification details.',
-      icon: <FileText className="text-blue-400" size={24} />
-    },
-    {
-      step: '02',
-      title: 'Global Verification & Sourcing',
-      desc: 'Our local agents in Korea, China, UAE & USA inspect physical condition and verify suppliers.',
-      icon: <Search className="text-blue-400" size={24} />
-    },
-    {
-      step: '03',
-      title: 'Receive All-Inclusive Quotation',
-      desc: 'Get an itemized quote including FOB price, freight shipping, port clearance, and doorstep delivery.',
-      icon: <FileSignature className="text-blue-400" size={24} />
-    },
-    {
-      step: '04',
-      title: 'Secure Escrow Payment',
-      desc: 'Lock in your order through IceLink secure payment channels with buyer protection guarantee.',
-      icon: <CreditCard className="text-blue-400" size={24} />
-    },
-    {
-      step: '05',
-      title: 'Doorstep Customs & Delivery',
-      desc: 'We clear customs at your local destination port and deliver directly to your specified address.',
-      icon: <Truck className="text-blue-400" size={24} />
-    }
-  ];
+
 
   return (
     <div className="flex-1 bg-[#020617] text-white min-h-screen">
@@ -558,42 +527,7 @@ export function SourcingView() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════
-          HOW IT WORKS PROCESS TIMELINE
-      ══════════════════════════════════════════════ */}
-      <section className="py-16 px-4 bg-[#010410] border-t border-blue-900/30">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="text-xs text-blue-400 font-extrabold uppercase tracking-widest block mb-2">Step-by-Step Workflow</span>
-            <h2 className="text-3xl font-black text-white">How IceLink Sourcing Works</h2>
-            <p className="text-xs sm:text-sm text-gray-400 mt-2">
-              Transparent, end-to-end global procurement designed to eliminate middleman risk.
-            </p>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-            {processSteps.map((item, idx) => (
-              <div
-                key={idx}
-                className="metric-card flex flex-col justify-between group"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-2xl font-black text-blue-400/60 group-hover:text-blue-400 transition">
-                      {item.step}
-                    </span>
-                    <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-                      {item.icon}
-                    </div>
-                  </div>
-                  <h3 className="font-extrabold text-sm text-white mb-2 leading-tight">{item.title}</h3>
-                  <p className="text-xs text-gray-400 leading-relaxed">{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
     </div>
   );

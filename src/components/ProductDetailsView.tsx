@@ -26,7 +26,7 @@ export function ProductDetailsView({ product, setCurrentTab }: ProductDetailsVie
     const text = encodeURIComponent(
       `Hello IceLink, I am interested in the ${product.name} (Stock ID: ${product.stock_id || 'N/A'}, Market: ${product.source_market}). Please provide pricing details.`
     );
-    window.open(`https://wa.me/233500000000?text=${text}`, '_blank');
+    window.open(`https://wa.me/233549685770?text=${text}`, '_blank');
   };
 
   const handleEnquirySubmit = async (e: React.FormEvent) => {

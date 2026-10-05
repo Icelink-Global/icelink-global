@@ -6,7 +6,7 @@ import {
   Car, Fuel, Settings, Milestone, ShieldCheck, Ship, FileCheck, Headphones,
   Search, ArrowRight, CheckCircle2, SlidersHorizontal, MessageSquare, Wrench,
   DollarSign, PackageCheck, Sparkles, Filter, X,
-  Camera, Zap, Gauge, ClipboardList
+  Camera, Zap, Gauge, ClipboardList, Hash
 } from 'lucide-react';
 
 interface AutoHausViewProps {
@@ -569,11 +569,6 @@ export function AutoHausView({ setSelectedProduct, setCurrentTab, currency, setC
                     <div className="absolute top-3 right-3 px-2.5 py-1 rounded bg-[#20b26c] text-[10px] text-white font-bold tracking-wide">
                       In Stock
                     </div>
-
-                    {/* Bottom Right - Stock ID */}
-                    <div className="absolute bottom-3 right-3 px-2 py-1.5 rounded bg-black/60 backdrop-blur-sm text-gray-200 text-[9px] font-mono tracking-wider">
-                      {p.stock_id}
-                    </div>
                   </div>
 
                   <div className="p-4 flex-1 flex flex-col justify-between">
@@ -585,6 +580,10 @@ export function AutoHausView({ setSelectedProduct, setCurrentTab, currency, setC
                       {/* Specs */}
                       <div className="grid grid-cols-2 gap-1.5 text-[11px] text-gray-600 mb-3 font-medium">
                         <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-100 rounded-md px-2 py-1 w-full">
+                          <Hash size={14} className="text-gray-400 shrink-0" />
+                          <span className="truncate font-mono">{p.stock_id || 'N/A'}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-100 rounded-md px-2 py-1 w-full">
                           <Fuel size={14} className="text-gray-400 shrink-0" />
                           <span className="truncate">{p.specifications['Fuel'] || 'Gasoline'}</span>
                         </div>
@@ -595,10 +594,6 @@ export function AutoHausView({ setSelectedProduct, setCurrentTab, currency, setC
                         <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-100 rounded-md px-2 py-1 w-full">
                           <Milestone size={14} className="text-gray-400 shrink-0" />
                           <span className="truncate">{p.specifications['Mileage'] || 'N/A'}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-100 rounded-md px-2 py-1 w-full">
-                          <Car size={14} className="text-gray-400 shrink-0" />
-                          <span className="truncate">{p.category || 'SUV'}</span>
                         </div>
                       </div>
 
