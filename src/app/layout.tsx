@@ -9,9 +9,36 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "IceLink Global — Connecting Markets. Delivering Possibilities.",
+  title: "Icelink Global | Quality Vehicles. Global Standards.",
   description:
-    "IceLink Global is a sourcing, trading and distribution company connecting trusted international markets with customers and businesses across Africa.",
+    "Icelink Global is a sourcing, trading and distribution company connecting trusted international markets with customers and businesses across Africa. Explore quality vehicles, parts, electronics, and global market access.",
+  metadataBase: new URL("https://icelinkglobal.com"),
+  alternates: {
+    canonical: "https://icelinkglobal.com",
+  },
+  openGraph: {
+    title: "Icelink Global | Quality Vehicles. Global Standards.",
+    description:
+      "Icelink Global connects trusted international markets with customers and businesses across Africa. Quality vehicles, sourcing, parts & accessories.",
+    url: "https://icelinkglobal.com",
+    siteName: "Icelink Global",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Icelink Global | Quality Vehicles. Global Standards.",
+    description:
+      "Icelink Global connects trusted international markets with customers and businesses across Africa.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
